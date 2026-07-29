@@ -2,7 +2,7 @@
 
 ## 1. Lancer kubeadm init
 
-`sudo kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=172.30.1.2 --kubernetes-version=v1.36.2 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem`{{exec}}
+`kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=172.30.1.2 --kubernetes-version=v1.36.2 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem`{{exec}}
 
 ### À quoi servent ces options ?
 
@@ -18,7 +18,7 @@
 
 Cette commande prend une à deux minutes. Elle effectue les pre-flight checks, génère les certificats du cluster, démarre les composants du control-plane (`kube-apiserver`, `kube-scheduler`, `kube-controller-manager`, `etcd`) sous forme de pods statiques, puis démarre `CoreDNS`.
 
-À la fin, `kubeadm init` affiche une commande `kubeadm join ...` : c'est celle que tu utiliserais pour rattacher un nœud worker à ce cluster. On y revient à la fin du scénario.
+À la fin, `kubeadm init` affiche une commande `kubeadm join ...` : c'est celle que tu utiliseras à l'étape 4 pour rattacher `node01` à ce cluster.
 
 ## 2. Configurer kubectl
 
@@ -26,9 +26,9 @@ Cette commande prend une à deux minutes. Elle effectue les pre-flight checks, g
 
 `mkdir -p $HOME/.kube`{{exec}}
 
-`sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config`{{exec}}
+`cp -i /etc/kubernetes/admin.conf $HOME/.kube/config`{{exec}}
 
-`sudo chown $(id -u):$(id -g) $HOME/.kube/config`{{exec}}
+`chown $(id -u):$(id -g) $HOME/.kube/config`{{exec}}
 
 ## 3. Vérifier
 

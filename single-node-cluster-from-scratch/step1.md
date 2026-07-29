@@ -1,44 +1,44 @@
 # Étape 1 — Installer kubeadm, kubelet et kubectl
 
-> Reste sur l'onglet **`controlplane`** pour toute cette étape (et pour les étapes 2 et 3). On ne touche à l'onglet `node01` qu'à l'étape 4.
+Tu es connecté en root sur les deux machines : pas besoin de `sudo` devant les commandes.
 
-`containerd` est déjà installé et configuré sur cette machine. Il te reste à installer les trois outils Kubernetes :
+`containerd` est déjà installé et configuré sur les deux nœuds. Il te reste à installer les trois outils Kubernetes, **sur `controlplane` ET sur `node01`** :
 
-- **kubeadm** : l'outil qui va créer le cluster ;
+- **kubeadm** : l'outil qui va créer/rejoindre le cluster ;
 - **kubelet** : l'agent qui tourne sur chaque nœud et démarre les pods ;
 - **kubectl** : le client en ligne de commande pour piloter le cluster.
 
 On suit la procédure officielle : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
-> `node01` dispose déjà de `containerd`, `kubeadm`, `kubelet` et `kubectl` (même préparation que `controlplane`) : inutile de répéter cette étape dessus.
+## Sur l'onglet `controlplane`
 
-## 1. Paquets nécessaires pour utiliser un dépôt APT via HTTPS
+### 1. Paquets nécessaires pour utiliser un dépôt APT via HTTPS
 
-`sudo apt-get update`{{exec}}
+`apt-get update`{{exec}}
 
-`sudo apt-get install -y apt-transport-https ca-certificates curl gpg`{{exec}}
+`apt-get install -y apt-transport-https ca-certificates curl gpg`{{exec}}
 
-## 2. Ajouter le dépôt communautaire officiel des paquets Kubernetes (pkgs.k8s.io)
+### 2. Ajouter le dépôt communautaire officiel des paquets Kubernetes (pkgs.k8s.io)
 
 Depuis mars 2024, l'ancien dépôt `apt.kubernetes.io` n'existe plus : le dépôt officiel est désormais `pkgs.k8s.io`, un dépôt par version mineure de Kubernetes.
 
-`sudo mkdir -p -m 755 /etc/apt/keyrings`{{exec}}
+`mkdir -p -m 755 /etc/apt/keyrings`{{exec}}
 
-`curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg`{{exec}}
+`curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg`{{exec}}
 
-`echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list`{{exec}}
+`echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list`{{exec}}
 
-## 3. Installer kubeadm, kubelet et kubectl
+### 3. Installer kubeadm, kubelet et kubectl
 
-`sudo apt-get update`{{exec}}
+`apt-get update`{{exec}}
 
-`sudo apt-get install -y kubelet kubeadm kubectl`{{exec}}
+`apt-get install -y kubelet kubeadm kubectl`{{exec}}
 
 Empêche les mises à jour automatiques de ces paquets (une montée de version non maîtrisée de Kubernetes peut casser ton cluster) :
 
-`sudo apt-mark hold kubelet kubeadm kubectl`{{exec}}
+`apt-mark hold kubelet kubeadm kubectl`{{exec}}
 
-## 4. Vérifier l'installation
+### 4. Vérifier l'installation
 
 `kubeadm version`{{exec}}
 
@@ -46,8 +46,8 @@ Empêche les mises à jour automatiques de ces paquets (une montée de version n
 
 `kubelet --version`{{exec}}
 
-Une fois ces trois commandes exécutées sans erreur, tu es prêt(e) pour la suite : initialiser le cluster.
+## Sur l'onglet `node01`
 
----
+Bascule sur l'onglet **`node01`** et répète exactement la même séquence de commandes que ci-dessus (les 8 commandes des points 1 à 4).
 
-**En cas de souci plus tard avec `node01`** (à l'étape 4, si le `kubeadm join` échoue avec une erreur du type "already exists" ou "a cluster already running") : va sur l'onglet `node01` et lance `sudo kubeadm reset -f`, puis réessaie. Cette machine a normalement déjà été réinitialisée automatiquement, mais ce n'est pas garanti à 100 % selon la configuration réseau de l'environnement.
+Une fois les deux nœuds équipés, tu es prêt(e) pour la suite : initialiser le cluster.

@@ -4,59 +4,44 @@
 #
 # Backend Killercoda : "kubernetes-kubeadm-2nodes" (controlplane + node01),
 # livré avec un cluster Kubernetes déjà installé et déjà joint sur les deux
-# nœuds. On remet ce cluster à zéro avec "kubeadm reset" (commande officielle
-# faite pour ça) pour repartir d'une base "quasi vierge" : containerd, les
-# paquets kubeadm/kubelet/kubectl et les prérequis systèmes restent en place
-# (ils sont forcément déjà corrects, puisque Kubernetes tournait dessus),
-# seul l'état créé par kubeadm est retiré.
+# nœuds, et les paquets kubeadm/kubelet/kubectl déjà installés. Ce script :
+#   1. reset l'état kubeadm (kubeadm reset), sur les deux nœuds ;
+#   2. désinstalle les paquets kubeadm/kubelet/kubectl, sur les deux nœuds ;
+# afin que l'étape 1 du scénario (installer kubeadm/kubelet/kubectl) soit
+# réellement nécessaire, sur les deux nœuds. containerd et les prérequis
+# systèmes (swap, modules noyau, sysctl) restent en place : ils sont
+# forcément déjà corrects, puisque Kubernetes tournait dessus juste avant.
+#
+# Ce script s'exécute sur "controlplane" (root). La préparation de "node01"
+# se fait à distance via SSH sans mot de passe (confirmé fonctionnel sur ce
+# backend).
 #
 # Doc officielle :
 #   https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/
-#
-# ATTENTION : ce script ne s'exécute que sur "controlplane". La remise à zéro
-# de "node01" est tentée via SSH depuis ce script. Si le SSH root sans mot de
-# passe n'est pas préconfiguré entre les deux hôtes sur ce backend, cette
-# partie échoue proprement (sans bloquer le reste du scénario) et l'élève
-# devra alors lancer lui-même "sudo kubeadm reset -f" sur l'onglet node01
-# (voir la remarque prévue à cet effet dans step1.md).
 # ============================================================================
 
-reset_local_node() {
-  kubeadm reset -f
-  rm -rf /etc/cni/net.d
-  rm -rf "$HOME/.kube"
-  iptables -F 2>/dev/null
-  iptables -t nat -F 2>/dev/null
-  iptables -t mangle -F 2>/dev/null
-  iptables -X 2>/dev/null
-  systemctl restart containerd
-}
+PREP_CMDS='
+kubeadm reset -f
+rm -rf /etc/cni/net.d
+rm -rf "$HOME/.kube"
+iptables -F 2>/dev/null
+iptables -t nat -F 2>/dev/null
+iptables -t mangle -F 2>/dev/null
+iptables -X 2>/dev/null
 
-reset_remote_node() {
-  local target="$1"
-  ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o BatchMode=yes "$target" '
-    kubeadm reset -f
-    rm -rf /etc/cni/net.d
-    rm -rf "$HOME/.kube"
-    iptables -F 2>/dev/null
-    iptables -t nat -F 2>/dev/null
-    iptables -t mangle -F 2>/dev/null
-    iptables -X 2>/dev/null
-    systemctl restart containerd
-  '
-}
+apt-mark unhold kubelet kubeadm kubectl 2>/dev/null
+apt-get purge -y kubeadm kubelet kubectl
+apt-get autoremove -y
+rm -f /etc/apt/sources.list.d/kubernetes.list
+rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 
-# --- 1. Reset du control-plane (exécution locale) ---
-reset_local_node
+systemctl restart containerd
+'
 
-# --- 2. Tentative de reset de node01 via SSH (nom d'hôte, puis IP fixe en secours) ---
-if reset_remote_node node01; then
-  echo "node01 réinitialisé avec succès via SSH (par nom d'hôte)."
-elif reset_remote_node 172.30.2.2; then
-  echo "node01 réinitialisé avec succès via SSH (par IP)."
-else
-  echo "AVERTISSEMENT : impossible de joindre node01 en SSH depuis ce script."
-  echo "L'élève devra lancer 'sudo kubeadm reset -f' lui-même sur l'onglet node01."
-fi
+# --- 1. Préparation du control-plane (exécution locale) ---
+bash -c "$PREP_CMDS"
+
+# --- 2. Préparation de node01 (exécution à distance via SSH) ---
+ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes node01 "$PREP_CMDS"
 
 exit 0
