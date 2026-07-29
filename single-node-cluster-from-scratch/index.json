@@ -1,6 +1,6 @@
 {
   "title": "Créer un cluster Kubernetes from scratch avec kubeadm",
-  "description": "Installe kubeadm, kubelet et kubectl puis construis un cluster Kubernetes mono-nœud, sur une VM où containerd et les prérequis systèmes sont déjà en place.",
+  "description": "Installe kubeadm, kubelet et kubectl puis construis un cluster Kubernetes à deux nœuds (control-plane + worker), sur des VM où containerd et les prérequis systèmes sont déjà en place.",
   "details": {
     "intro": {
       "text": "intro.md",
@@ -23,9 +23,14 @@
         "verify": "step3-verify.sh"
       },
       {
-        "title": "Valider le cluster",
+        "title": "Rattacher le nœud worker (kubeadm join)",
         "text": "step4.md",
         "verify": "step4-verify.sh"
+      },
+      {
+        "title": "Valider le cluster",
+        "text": "step5.md",
+        "verify": "step5-verify.sh"
       }
     ],
     "finish": {
@@ -33,6 +38,6 @@
     }
   },
   "backend": {
-    "imageid": "ubuntu"
+    "imageid": "kubernetes-kubeadm-2nodes"
   }
 }
