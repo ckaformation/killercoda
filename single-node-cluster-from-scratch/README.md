@@ -6,8 +6,8 @@
 kubeadm-from-scratch/
 ├── index.json              # config du scénario (titre, steps, backend)
 ├── intro.md                # page d'intro affichée à l'élève
-├── intro-background.sh     # script INVISIBLE : reset kubeadm des 2 nœuds
-├── step1.md / step1-verify.sh   # installer kubeadm / kubelet / kubectl
+├── intro-background.sh     # script INVISIBLE : reset + désinstallation kubeadm/kubelet/kubectl sur les 2 nœuds
+├── step1.md / step1-verify.sh   # installer kubeadm / kubelet / kubectl (sur les 2 nœuds)
 ├── step2.md / step2-verify.sh   # kubeadm init + config kubectl
 ├── step3.md / step3-verify.sh   # installer le CNI (Calico)
 ├── step4.md / step4-verify.sh   # rattacher node01 (kubeadm join)
@@ -21,37 +21,37 @@ repository connecté à Killercoda.
 
 ## Choix effectués et pourquoi
 
-- **Environnement Killercoda (`backend.imageid`) :
-  `kubernetes-kubeadm-2nodes`.** C'est un backend **confirmé et
-  documenté** par Killercoda (contrairement à un hypothétique
-  environnement "2 VM Ubuntu vierges" que je n'ai jamais réussi à
-  vérifier malgré plusieurs recherches). Il fournit deux hôtes réels,
-  chacun avec son propre onglet de terminal : `controlplane` et
-  `node01`.
+- **Pas de `sudo`** : les commandes s'exécutent en root par défaut sur
+  Killercoda, donc `sudo` a été retiré de toutes les commandes
+  (`step1.md`, `step2.md`, `step4.md`).
 
-  ⚠️ Ce backend arrive avec un cluster Kubernetes **déjà installé et
-  déjà joint** sur les deux nœuds — ce n'est donc pas vierge par
-  défaut. Le script `intro-background.sh` s'en sert comme d'un
-  raccourci : il utilise `kubeadm reset` (commande officielle,
-  https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/)
-  pour supprimer l'état créé par kubeadm sur les deux nœuds, tout en
-  conservant `containerd`, les paquets `kubeadm`/`kubelet`/`kubectl`
-  et les prérequis systèmes — qui sont forcément déjà corrects,
+- **Environnement Killercoda (`backend.imageid`) :
+  `kubernetes-kubeadm-2nodes`.** C'est un backend confirmé et
+  documenté par Killercoda. Il fournit deux hôtes réels, chacun avec
+  son propre onglet de terminal : `controlplane` et `node01`.
+
+  Ce backend arrive avec un cluster Kubernetes déjà installé et déjà
+  joint sur les deux nœuds, et les paquets `kubeadm`/`kubelet`/
+  `kubectl` déjà présents. Le script `intro-background.sh` remet donc
+  les deux nœuds à une base "quasi vierge" :
+  1. `kubeadm reset -f` (commande officielle,
+     https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/)
+     + nettoyage de `/etc/cni/net.d`, de `$HOME/.kube` et des règles
+     iptables laissées par kube-proxy (non gérées par `kubeadm reset`
+     lui-même, d'après la doc officielle) ;
+  2. **désinstallation des paquets `kubeadm`, `kubelet` et
+     `kubectl`** (`apt-get purge`), pour que l'étape 1 du scénario
+     (les installer) soit réellement nécessaire sur les deux nœuds,
+     et pas juste sur `controlplane`.
+
+  `containerd` et les prérequis systèmes (swap, modules noyau,
+  sysctl) restent en place : ils sont forcément déjà corrects,
   puisque Kubernetes tournait dessus juste avant.
 
-- **Point d'incertitude assumé, accepté par toi** : le script
-  `intro-background.sh` ne s'exécute (à ma connaissance, confirmée)
-  que sur l'hôte `controlplane`. Pour réinitialiser `node01` aussi, le
-  script tente une connexion **SSH** (`node01`, puis repli sur l'IP
-  fixe `172.30.2.2`) pour y lancer la même commande `kubeadm reset -f`.
-  Je n'ai **pas de confirmation officielle** que le SSH root sans mot
-  de passe est préconfiguré entre les deux hôtes sur ce backend — un
-  témoignage d'utilisateur mentionne "ssh to node01" sans plus de
-  détail. Si le SSH échoue, le script le signale dans ses logs (visibles
-  dans Creator Debug) sans bloquer le scénario, et une remarque a été
-  ajoutée dans `step1.md` pour que l'élève relance `sudo kubeadm reset -f`
-  lui-même sur `node01` en cas de souci au moment du `kubeadm join`
-  (étape 4).
+- **Exécution sur `node01` via SSH.** Le script tourne sur
+  `controlplane` et exécute la même séquence à distance sur `node01`
+  via `ssh node01 "..."`. Le SSH root sans mot de passe entre les deux
+  hôtes fonctionne (confirmé) sur ce backend.
 
 - **`kubeadm init`** (étape 2, sur `controlplane`) utilise les options
   suivantes (demandées explicitement) :
@@ -71,8 +71,9 @@ repository connecté à Killercoda.
   documentation officielle au moment de la rédaction (vérifiée en
   direct sur kubernetes.io). Le `kubeadm init` de l'étape 2 épingle
   ensuite explicitement le patch `v1.36.2` via `--kubernetes-version`.
-  `node01` dispose déjà des mêmes paquets (même image de base), donc
-  l'étape 1 ne s'exécute que sur `controlplane`.
+  L'étape 1 s'exécute désormais **sur `controlplane` ET sur `node01`**
+  (mêmes commandes, à répéter sur les deux onglets), puisque les deux
+  nœuds ont été désinstallés par le script de préparation.
 
 - **CNI : Calico**, installé via son **manifeste unique**
   `calico.yaml` (v3.32.1), **sans l'opérateur Tigera** — méthode plus
@@ -83,13 +84,13 @@ repository connecté à Killercoda.
   Calico se déploie automatiquement sur `node01` dès qu'il rejoint le
   cluster, sans étape supplémentaire.
 
-- **Étape 4 (nouvelle) : `kubeadm join` sur `node01`.** L'élève
-  récupère la commande de jonction (affichée par `kubeadm init`, ou
-  régénérée avec `kubeadm token create --print-join-command`) et
-  l'exécute lui-même sur l'onglet `node01`. C'est la seule partie du
-  scénario qui n'est pas gérée par un script invisible : la commande
-  de jonction est un token à usage pédagogique qu'il est plus
-  parlant de faire taper à l'élève.
+- **Étape 4 : `kubeadm join` sur `node01`.** L'élève récupère la
+  commande de jonction (affichée par `kubeadm init`, ou régénérée avec
+  `kubeadm token create --print-join-command`) et l'exécute lui-même
+  sur l'onglet `node01`. C'est la seule partie du scénario qui n'est
+  pas gérée par un script invisible : la commande de jonction est un
+  token à usage pédagogique qu'il est plus parlant de faire taper à
+  l'élève.
 
 - **Étape 5 : validation du cluster.** Le retrait du taint
   control-plane est conservé comme "filet de sécurité" (au cas où
@@ -111,18 +112,11 @@ repository connecté à Killercoda.
 
 ## Limites connues
 
-- **Le point le plus fragile du scénario est le reset SSH de
-  `node01`.** Je n'ai pas pu le tester en conditions réelles. À la
-  première exécution en tant que créateur, vérifie dans les logs de
-  `intro-background.sh` (Creator Debug) si le reset de `node01` a
-  réussi. S'il échoue systématiquement, la remarque de secours dans
-  `step1.md` prend le relais, mais le scénario perd un peu de son
-  côté "tout est prêt".
-- Testé uniquement "sur le papier" par ailleurs : je n'ai pas d'accès
-  direct à Killercoda pour exécuter ce scénario de bout en bout.
-  Avant mise en prod, vérifie aussi le timing (durée de `kubeadm
-  init`, du démarrage des pods Calico, du `kubeadm join`) face aux
-  timeouts des `verify.sh`.
+- Testé uniquement "sur le papier" : je n'ai pas d'accès direct à
+  Killercoda pour exécuter ce scénario de bout en bout. Avant mise en
+  prod, vérifie le timing (durée de `kubeadm init`, de la
+  désinstallation/réinstallation des paquets, du démarrage des pods
+  Calico, du `kubeadm join`) face aux timeouts des `verify.sh`.
 - Si le contenu du backend `kubernetes-kubeadm-2nodes` change (version
   de Kubernetes préinstallée, nom des hôtes, etc.), `intro-background.sh`
   et les IP figées (`172.30.1.2`, `172.30.2.2`) mériteraient d'être

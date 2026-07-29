@@ -10,7 +10,7 @@ Tu viens de construire un cluster Kubernetes à deux nœuds, from scratch, à la
 
 ## Pour ajouter d'autres nœuds
 
-Le principe reste le même que pour `node01` : préparer la machine (containerd, prérequis systèmes, paquets kubeadm/kubelet/kubectl), puis exécuter la commande `kubeadm join ...` (régénérable à tout moment avec `kubeadm token create --print-join-command` depuis le control-plane) avec `sudo` sur la nouvelle machine.
+Le principe reste le même que pour `node01` : préparer la machine (containerd, prérequis systèmes, paquets kubeadm/kubelet/kubectl), puis exécuter la commande `kubeadm join ...` (régénérable à tout moment avec `kubeadm token create --print-join-command` depuis le control-plane) sur la nouvelle machine.
 
 ## Pour aller plus loin
 

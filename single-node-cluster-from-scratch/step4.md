@@ -16,10 +16,10 @@ Copie cette ligne complète.
 
 ## 2. Rejoindre le cluster depuis node01
 
-Bascule sur l'onglet **`node01`**, puis exécute la commande copiée, précédée de `sudo` :
+Bascule sur l'onglet **`node01`**, puis exécute la commande copiée :
 
 ```
-sudo kubeadm join 172.30.1.2:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+kubeadm join 172.30.1.2:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
 ```
 
 > Remplace bien `<token>` et `<hash>` par les valeurs affichées chez toi — elles sont propres à ton cluster et changent à chaque exécution.
