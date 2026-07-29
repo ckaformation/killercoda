@@ -1,25 +1,35 @@
-# Étape 4 — Valider le cluster
+# Étape 4 — Rattacher le nœud worker avec kubeadm join
 
-## 1. Autoriser le scheduling sur le control-plane
+## 1. Récupérer la commande de jonction
 
-Par défaut, un nœud control-plane porte un taint qui l'empêche de recevoir des charges applicatives classiques. Ce cluster n'ayant qu'un seul nœud, on retire ce taint pour pouvoir y déployer des pods :
+Si tu as encore sous les yeux la sortie de `kubeadm init` (étape 2), la commande `kubeadm join ...` s'y trouve déjà. Sinon, régénère-la depuis l'onglet **`controlplane`** :
 
-`kubectl taint nodes --all node-role.kubernetes.io/control-plane-`{{exec}}
+`kubeadm token create --print-join-command`{{exec}}
 
-## 2. Déployer une application de test
+Cette commande affiche une ligne du type :
 
-`kubectl create deployment nginx-test --image=nginx`{{exec}}
+```
+kubeadm join 172.30.1.2:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+```
 
-## 3. Vérifier que le pod démarre correctement
+Copie cette ligne complète.
 
-`kubectl get pods -o wide`{{exec}}
+## 2. Rejoindre le cluster depuis node01
 
-Le pod `nginx-test` doit passer à l'état `Running`.
+Bascule sur l'onglet **`node01`**, puis exécute la commande copiée, précédée de `sudo` :
 
-## 4. Exposer l'application (optionnel)
+```
+sudo kubeadm join 172.30.1.2:6443 --token <token> --discovery-token-ca-cert-hash sha256:<hash>
+```
 
-`kubectl expose deployment nginx-test --port=80 --type=NodePort`{{exec}}
+> Remplace bien `<token>` et `<hash>` par les valeurs affichées chez toi — elles sont propres à ton cluster et changent à chaque exécution.
 
-`kubectl get svc nginx-test`{{exec}}
+`kubeadm join` effectue ses propres pre-flight checks, télécharge les informations du cluster, puis configure et démarre le `kubelet` sur ce nœud.
 
-Félicitations : ton cluster Kubernetes, créé from scratch avec kubeadm, fonctionne !
+## 3. Vérifier depuis controlplane
+
+Reviens sur l'onglet **`controlplane`** :
+
+`kubectl get nodes`{{exec}}
+
+`node01` doit apparaître, puis passer à l'état `Ready` après quelques secondes (le DaemonSet Calico installé à l'étape 3 s'y déploie automatiquement, sans action supplémentaire de ta part).

@@ -1,48 +1,62 @@
 #!/bin/bash
 # ============================================================================
-# Préparation silencieuse de la VM avant que l'élève ne commence.
-# Simule une machine déjà préparée par un administrateur système :
-#   - prérequis systèmes (swap, modules noyau, sysctl)
-#   - installation et configuration de containerd
+# Préparation silencieuse des VM avant que l'élève ne commence.
 #
-# Basé sur la documentation officielle Kubernetes :
-#   https://kubernetes.io/docs/setup/production-environment/container-runtimes/
-#   https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+# Backend Killercoda : "kubernetes-kubeadm-2nodes" (controlplane + node01),
+# livré avec un cluster Kubernetes déjà installé et déjà joint sur les deux
+# nœuds. On remet ce cluster à zéro avec "kubeadm reset" (commande officielle
+# faite pour ça) pour repartir d'une base "quasi vierge" : containerd, les
+# paquets kubeadm/kubelet/kubectl et les prérequis systèmes restent en place
+# (ils sont forcément déjà corrects, puisque Kubernetes tournait dessus),
+# seul l'état créé par kubeadm est retiré.
+#
+# Doc officielle :
+#   https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/
+#
+# ATTENTION : ce script ne s'exécute que sur "controlplane". La remise à zéro
+# de "node01" est tentée via SSH depuis ce script. Si le SSH root sans mot de
+# passe n'est pas préconfiguré entre les deux hôtes sur ce backend, cette
+# partie échoue proprement (sans bloquer le reste du scénario) et l'élève
+# devra alors lancer lui-même "sudo kubeadm reset -f" sur l'onglet node01
+# (voir la remarque prévue à cet effet dans step1.md).
 # ============================================================================
-set -e
-export DEBIAN_FRONTEND=noninteractive
 
-# --- 1. Désactivation du swap -------------------------------------------
-swapoff -a || true
-sed -ri '/\sswap\s/s/^/#/' /etc/fstab || true
+reset_local_node() {
+  kubeadm reset -f
+  rm -rf /etc/cni/net.d
+  rm -rf "$HOME/.kube"
+  iptables -F 2>/dev/null
+  iptables -t nat -F 2>/dev/null
+  iptables -t mangle -F 2>/dev/null
+  iptables -X 2>/dev/null
+  systemctl restart containerd
+}
 
-# --- 2. Modules noyau requis (overlay, br_netfilter) --------------------
-cat <<EOF | tee /etc/modules-load.d/k8s.conf
-overlay
-br_netfilter
-EOF
-modprobe overlay
-modprobe br_netfilter
+reset_remote_node() {
+  local target="$1"
+  ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 -o BatchMode=yes "$target" '
+    kubeadm reset -f
+    rm -rf /etc/cni/net.d
+    rm -rf "$HOME/.kube"
+    iptables -F 2>/dev/null
+    iptables -t nat -F 2>/dev/null
+    iptables -t mangle -F 2>/dev/null
+    iptables -X 2>/dev/null
+    systemctl restart containerd
+  '
+}
 
-# --- 3. Paramètres sysctl requis -----------------------------------------
-cat <<EOF | tee /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-iptables  = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.ipv4.ip_forward                 = 1
-EOF
-sysctl --system
+# --- 1. Reset du control-plane (exécution locale) ---
+reset_local_node
 
-# --- 4. Installation de containerd ---------------------------------------
-apt-get update -y
-apt-get install -y containerd
-
-# --- 5. Configuration de containerd : driver de cgroup systemd -----------
-# (kubeadm attend le driver "systemd" par défaut depuis Kubernetes v1.22)
-mkdir -p /etc/containerd
-containerd config default | tee /etc/containerd/config.toml >/dev/null
-sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.toml
-
-systemctl restart containerd
-systemctl enable containerd >/dev/null 2>&1 || true
+# --- 2. Tentative de reset de node01 via SSH (nom d'hôte, puis IP fixe en secours) ---
+if reset_remote_node node01; then
+  echo "node01 réinitialisé avec succès via SSH (par nom d'hôte)."
+elif reset_remote_node 172.30.2.2; then
+  echo "node01 réinitialisé avec succès via SSH (par IP)."
+else
+  echo "AVERTISSEMENT : impossible de joindre node01 en SSH depuis ce script."
+  echo "L'élève devra lancer 'sudo kubeadm reset -f' lui-même sur l'onglet node01."
+fi
 
 exit 0

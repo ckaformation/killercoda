@@ -1,28 +1,23 @@
 # Créer un cluster Kubernetes from scratch avec kubeadm
 
-Bienvenue ! Dans ce scénario, tu vas construire, à la main, un cluster Kubernetes mono-nœud avec `kubeadm`, en suivant la documentation officielle : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/
+Bienvenue ! Dans ce scénario, tu vas construire, à la main, un cluster Kubernetes à **deux nœuds** (`controlplane` + `node01`) avec `kubeadm`, en suivant la documentation officielle : https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/
 
-## Ce qui est déjà en place sur cette VM
+## Ce qui est déjà en place
 
-Pour te concentrer sur les étapes spécifiques à Kubernetes, cette machine a été préparée en amont, comme le ferait un administrateur système avant l'installation des outils Kubernetes :
+Cet environnement fournit deux machines, chacune accessible via son propre onglet de terminal : `controlplane` et `node01`.
 
-- **containerd** est installé et configuré (driver de cgroup `systemd`, conformément à la documentation officielle) ;
-- le **swap est désactivé** ;
-- les **modules noyau** `overlay` et `br_netfilter` sont chargés ;
-- les **paramètres sysctl** requis pour le bridging réseau sont appliqués :
-  - `net.bridge.bridge-nf-call-iptables = 1`
-  - `net.bridge.bridge-nf-call-ip6tables = 1`
-  - `net.ipv4.ip_forward = 1`
+Pour te concentrer sur les étapes spécifiques à kubeadm, ces deux machines ont été remises à une base "quasi vierge" avant que tu n'arrives :
 
-Tu peux vérifier tout ça toi-même à tout moment avec, par exemple :
-
-`systemctl status containerd`{{exec}}
+- **containerd**, les paquets **kubeadm**, **kubelet** et **kubectl** sont déjà installés sur les deux nœuds ;
+- le **swap est désactivé**, les **modules noyau** requis (`overlay`, `br_netfilter`) sont chargés, et les **paramètres sysctl** nécessaires au bridging réseau sont appliqués ;
+- tout état Kubernetes préexistant (certificats, configuration, adhésion à un cluster) a été retiré via `kubeadm reset`, pour repartir de zéro.
 
 ## Ce que tu vas faire
 
-1. Installer `kubeadm`, `kubelet` et `kubectl`.
+1. Vérifier/installer `kubeadm`, `kubelet` et `kubectl` sur le control-plane.
 2. Initialiser le control-plane avec `kubeadm init`.
 3. Installer un add-on réseau de pods (CNI).
-4. Vérifier que le cluster fonctionne en y déployant une application.
+4. Rattacher `node01` au cluster avec `kubeadm join`.
+5. Vérifier que le cluster fonctionne en y déployant une application.
 
 C'est parti !
