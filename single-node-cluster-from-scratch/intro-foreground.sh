@@ -10,25 +10,21 @@
 # (reset kubeadm, désinstallation kubeadm/kubelet/kubectl, nettoyage APT)
 # soit terminée sur controlplane et/ou node01, ce qui provoque des erreurs
 # intermittentes du type "E: Unable to locate package".
+#
+# Mécanisme : un tube nommé (FIFO), pas une boucle de polling avec sleep.
+# Une seule commande bloquante ("cat" sur la FIFO) : rien ne s'affiche
+# pendant l'attente, contrairement à une boucle "while/sleep" qui
+# réaffiche des lignes en continu.
 # ============================================================================
 
-echo "Préparation de l'environnement en cours sur controlplane et node01"
-echo "(reset kubeadm, désinstallation de kubeadm/kubelet/kubectl, nettoyage APT)."
-echo "Merci de patienter quelques dizaines de secondes, c'est automatique..."
-echo ""
+echo "Préparation de l'environnement en cours..."
 
-TIMEOUT=180
-ELAPSED=0
-while [ ! -f /tmp/.scenario-prep-done ] && [ "$ELAPSED" -lt "$TIMEOUT" ]; do
-  sleep 2
-  ELAPSED=$((ELAPSED + 2))
-done
+mkfifo /tmp/.scenario-prep-fifo 2>/dev/null
 
-echo ""
-if [ -f /tmp/.scenario-prep-done ]; then
+if timeout 180 cat /tmp/.scenario-prep-fifo >/dev/null 2>&1; then
   echo "C'est prêt ! Tu peux commencer l'étape 1."
 else
-  echo "La préparation prend plus de temps que prévu (plus de ${TIMEOUT}s)."
-  echo "Tu peux commencer, mais si tu obtiens une erreur \"Unable to locate"
-  echo "package\" à l'étape 1, attends quelques secondes et relance la commande."
+  echo "C'est prêt (ou presque) ! Si tu obtiens une erreur \"Unable to locate package\" à l'étape 1, attends quelques secondes et relance la commande."
 fi
+
+rm -f /tmp/.scenario-prep-fifo 2>/dev/null
