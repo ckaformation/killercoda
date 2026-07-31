@@ -16,6 +16,14 @@
 # se fait à distance via SSH sans mot de passe (confirmé fonctionnel sur ce
 # backend).
 #
+# Le script nettoie aussi largement toute config APT Kubernetes résiduelle
+# (dépôt, clé, épinglage de version) laissée par l'image pré-construite,
+# quel que soit son nom de fichier — pas seulement les fichiers utilisés
+# dans step1.md. Sans ce nettoyage large, un dépôt ou un pin résiduel
+# pointant vers une ancienne version mineure peut faire installer une
+# version différente de celle voulue par la suite (observé : 1.35.1 au
+# lieu de 1.36.3 sur un nœud).
+#
 # Doc officielle :
 #   https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/
 # ============================================================================
@@ -32,8 +40,16 @@ iptables -X 2>/dev/null
 apt-mark unhold kubelet kubeadm kubectl 2>/dev/null
 apt-get purge -y kubeadm kubelet kubectl
 apt-get autoremove -y
-rm -f /etc/apt/sources.list.d/kubernetes.list
-rm -f /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+# Nettoyage large de toute config APT Kubernetes residuelle (depot, cle,
+# epinglage de version), quel que soit son nom de fichier.
+grep -rlE "pkgs\.k8s\.io|kubernetes" /etc/apt/sources.list.d/ 2>/dev/null | xargs -r rm -f
+grep -rlE "pkgs\.k8s\.io|kubeadm|kubelet|kubectl" /etc/apt/preferences.d/ 2>/dev/null | xargs -r rm -f
+sed -i "/pkgs\.k8s\.io/d" /etc/apt/sources.list 2>/dev/null
+rm -f /etc/apt/keyrings/kubernetes*.gpg /usr/share/keyrings/kubernetes*.gpg /etc/apt/trusted.gpg.d/kubernetes*.gpg
+
+apt-get clean
+apt-get update
 
 systemctl restart containerd
 '
