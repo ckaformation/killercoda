@@ -8,13 +8,13 @@ Cet environnement fournit deux machines, chacune accessible via son propre ongle
 
 Pour te concentrer sur les étapes spécifiques à kubeadm, ces deux machines ont été remises à une base "quasi vierge" avant que tu n'arrives :
 
-- **containerd**, les paquets **kubeadm**, **kubelet** et **kubectl** sont déjà installés sur les deux nœuds ;
+- **containerd** est déjà installé et configuré sur les deux nœuds ; en revanche, les paquets **kubeadm**, **kubelet** et **kubectl** ont été désinstallés — ce sera l'objet de l'étape 1 ;
 - le **swap est désactivé**, les **modules noyau** requis (`overlay`, `br_netfilter`) sont chargés, et les **paramètres sysctl** nécessaires au bridging réseau sont appliqués ;
 - tout état Kubernetes préexistant (certificats, configuration, adhésion à un cluster) a été retiré via `kubeadm reset`, pour repartir de zéro.
 
 ## Ce que tu vas faire
 
-1. Vérifier/installer `kubeadm`, `kubelet` et `kubectl` sur le control-plane.
+1. Installer `kubeadm`, `kubelet` et `kubectl` sur `controlplane` et `node01`.
 2. Initialiser le control-plane avec `kubeadm init`.
 3. Installer un add-on réseau de pods (CNI).
 4. Rattacher `node01` au cluster avec `kubeadm join`.
