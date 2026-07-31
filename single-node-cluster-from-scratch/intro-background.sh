@@ -49,15 +49,28 @@ sed -i "/pkgs\.k8s\.io/d" /etc/apt/sources.list 2>/dev/null
 rm -f /etc/apt/keyrings/kubernetes*.gpg /usr/share/keyrings/kubernetes*.gpg /etc/apt/trusted.gpg.d/kubernetes*.gpg
 
 apt-get clean
-apt-get update
 
 systemctl restart containerd
 '
 
-# --- 1. Préparation du control-plane (exécution locale) ---
-bash -c "$PREP_CMDS"
+# --- Préparation de controlplane (local) et node01 (SSH), en parallèle ---
+# (exécution séquentielle testée initialement : sur ce backend, le script
+# pouvait prendre 40 à 80 secondes au total, laissant une fenêtre pendant
+# laquelle un·e élève rapide pouvait démarrer l'étape 1 avant la fin du
+# nettoyage APT — d'où le passage en parallèle, qui réduit d'autant cette
+# fenêtre de risque.)
+bash -c "$PREP_CMDS" &
+PID_CONTROLPLANE=$!
 
-# --- 2. Préparation de node01 (exécution à distance via SSH) ---
-ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes node01 "$PREP_CMDS"
+ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes node01 "$PREP_CMDS" &
+PID_NODE01=$!
+
+wait "$PID_CONTROLPLANE"
+wait "$PID_NODE01"
+
+# Fichier témoin lu par intro-foreground.sh : signale que la préparation
+# des deux nœuds est bien terminée, pour bloquer le terminal de l'élève
+# jusque-là (cf. intro-foreground.sh).
+touch /tmp/.scenario-prep-done
 
 exit 0
