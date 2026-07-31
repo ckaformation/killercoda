@@ -6,7 +6,7 @@ Tu es connecté en root sur les deux machines : pas besoin de `sudo` devant les 
 
 Un script prépare `controlplane` et `node01` en arrière-plan depuis l'ouverture de ce scénario (containerd, reset kubeadm, nettoyage APT). Lance cette commande pour attendre sa fin avant de continuer — si elle met quelques secondes à répondre, c'est normal :
 
-`while [ ! -f /tmp/.scenario-prep-done ]; do sleep 2; done; echo "Préparation terminée, tu peux continuer."`{{exec}}
+`/root/wait-for-prep.sh`{{exec}}
 
 `containerd` est déjà installé et configuré sur les deux nœuds. Il te reste à installer les trois outils Kubernetes, **sur `controlplane` ET sur `node01`** :
 

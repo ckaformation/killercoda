@@ -28,6 +28,26 @@
 #   https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-reset/
 # ============================================================================
 
+# --- Dépose du script d'attente utilisé en tête de step1.md ---
+# (écriture de fichier quasi instantanée : disponible bien avant que
+# l'élève n'ait fini de lire l'intro et n'arrive à l'étape 1)
+cat > /root/wait-for-prep.sh << 'WAITEOF'
+#!/bin/bash
+echo "Preparation de l'environnement en cours..."
+TIMEOUT=180
+ELAPSED=0
+while [ ! -f /tmp/.scenario-prep-done ] && [ "$ELAPSED" -lt "$TIMEOUT" ]; do
+  sleep 2
+  ELAPSED=$((ELAPSED + 2))
+done
+if [ -f /tmp/.scenario-prep-done ]; then
+  echo "C'est pret ! Tu peux continuer."
+else
+  echo "La preparation prend plus de temps que prevu. Tu peux continuer, mais surveille d'eventuelles erreurs \"Unable to locate package\"."
+fi
+WAITEOF
+chmod +x /root/wait-for-prep.sh
+
 PREP_CMDS='
 kubeadm reset -f
 rm -rf /etc/cni/net.d
