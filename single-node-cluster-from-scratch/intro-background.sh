@@ -68,11 +68,9 @@ PID_NODE01=$!
 wait "$PID_CONTROLPLANE"
 wait "$PID_NODE01"
 
-# Signale à intro-foreground.sh (qui bloque le terminal de l'élève en
-# lisant cette même FIFO) que la préparation des deux nœuds est terminée.
-# "timeout" évite que ce script reste bloqué indéfiniment si, pour une
-# raison quelconque, personne ne lit jamais la FIFO en face.
-mkfifo /tmp/.scenario-prep-fifo 2>/dev/null
-timeout 200 bash -c 'echo done > /tmp/.scenario-prep-fifo' 2>/dev/null
+# Fichier témoin : signale que la préparation des deux nœuds est terminée.
+# Lu par la première commande de step1.md, qui attend ce fichier avant de
+# laisser l'élève continuer (cf. step1.md).
+touch /tmp/.scenario-prep-done
 
 exit 0
