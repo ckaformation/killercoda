@@ -12,13 +12,7 @@ On suit la procédure officielle : https://kubernetes.io/docs/setup/production-e
 
 ## Sur l'onglet `controlplane`
 
-### 1. Paquets nécessaires pour utiliser un dépôt APT via HTTPS
-
-`apt-get update`{{exec}}
-
-`apt-get install -y apt-transport-https ca-certificates curl gpg`{{exec}}
-
-### 2. Ajouter le dépôt communautaire officiel des paquets Kubernetes (pkgs.k8s.io)
+### 1. Ajouter le dépôt communautaire officiel des paquets Kubernetes (pkgs.k8s.io)
 
 Depuis mars 2024, l'ancien dépôt `apt.kubernetes.io` n'existe plus : le dépôt officiel est désormais `pkgs.k8s.io`, un dépôt par version mineure de Kubernetes.
 
@@ -28,7 +22,7 @@ Depuis mars 2024, l'ancien dépôt `apt.kubernetes.io` n'existe plus : le dépô
 
 `echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list`{{exec}}
 
-### 3. Installer kubeadm, kubelet et kubectl
+### 2. Installer kubeadm, kubelet et kubectl
 
 `apt-get update`{{exec}}
 
@@ -38,7 +32,7 @@ Empêche les mises à jour automatiques de ces paquets (une montée de version n
 
 `apt-mark hold kubelet kubeadm kubectl`{{exec}}
 
-### 4. Vérifier l'installation
+### 3. Vérifier l'installation
 
 `kubeadm version`{{exec}}
 
@@ -48,6 +42,6 @@ Empêche les mises à jour automatiques de ces paquets (une montée de version n
 
 ## Sur l'onglet `node01`
 
-Bascule sur l'onglet **`node01`** et répète exactement la même séquence de commandes que ci-dessus (les 8 commandes des points 1 à 4).
+Bascule sur l'onglet **`node01`** et répète exactement la même séquence de commandes que ci-dessus (points 1 à 3).
 
 Une fois les deux nœuds équipés, tu es prêt(e) pour la suite : initialiser le cluster.

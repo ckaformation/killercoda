@@ -10,7 +10,7 @@ if [ -z "$NODEPORT" ]; then
   exit 1
 fi
 
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://localhost:${NODEPORT}")
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "http://node01:${NODEPORT}")
 if [ "$HTTP_CODE" != "200" ]; then
   echo "Le service ne répond pas correctement (code HTTP: ${HTTP_CODE})."
   exit 1

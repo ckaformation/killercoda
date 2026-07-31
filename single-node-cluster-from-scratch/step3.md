@@ -14,12 +14,20 @@ Ce manifeste déploie notamment :
 
 ## 2. Suivre le démarrage des pods Calico
 
-`kubectl get pods -n kube-system`{{exec}}
+`watch kubectl get pods -n kube-system`{{exec}}
 
-Relance la commande jusqu'à ce que les pods `calico-node-*` et `calico-kube-controllers-*` soient à l'état `Running`.
+Attends que les pods `calico-node-*` et `calico-kube-controllers-*` passent à l'état `Running`, puis quitte avec `Ctrl+C`.
 
 ## 3. Vérifier que le nœud passe à Ready
 
 `kubectl get nodes`{{exec}}
 
 Le nœud doit maintenant afficher `Ready`.
+
+Tu peux aussi observer, en vue détaillée, sur quel(s) nœud(s) s'exécutent les pods Calico :
+
+`watch kubectl get pods -o wide -n kube-system`{{exec}}
+
+> À ce stade, `node01` n'a pas encore rejoint le cluster (ce sera l'objet de l'étape 4) : tu ne verras donc qu'un seul pod `calico-node`, sur `controlplane`. Une fois `node01` rattaché, un second pod `calico-node` (le DaemonSet) y apparaîtra automatiquement — tu pourras revenir vérifier avec cette même commande.
+
+Quitte avec `Ctrl+C` quand tu as terminé.
