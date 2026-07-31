@@ -1,5 +1,7 @@
 # Étape 2 — Initialiser le control-plane avec kubeadm init
 
+> Reste sur l'onglet **`controlplane`** pour toute cette étape.
+
 ## 1. Lancer kubeadm init
 
 `kubeadm init --pod-network-cidr=192.168.0.0/16 --apiserver-advertise-address=172.30.1.2 --kubernetes-version=v1.36.2 --ignore-preflight-errors=NumCPU --ignore-preflight-errors=Mem`{{exec}}
