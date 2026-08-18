@@ -1,0 +1,43 @@
+{
+  "title": "Mettre à niveau un cluster Kubernetes avec kubeadm",
+  "description": "Cluster kubeadm à 2 nœuds déjà installé (v1.35.x) : upgrade du control-plane puis du worker vers v1.36.x, en suivant la procédure officielle kubeadm.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Explorer l'état actuel du cluster",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Upgrader le control-plane (kubeadm)",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Upgrader kubelet et kubectl sur le control-plane",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Upgrader kubeadm sur le worker",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      },
+      {
+        "title": "Upgrader kubelet et kubectl sur le worker",
+        "text": "step5.md",
+        "verify": "step5-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
