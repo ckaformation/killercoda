@@ -41,3 +41,11 @@ Cette commande vérifie que le cluster peut être mis à niveau et affiche les v
 Cette commande met à niveau les composants du control-plane (`kube-apiserver`, `kube-controller-manager`, `kube-scheduler`, `etcd`) ainsi que CoreDNS et kube-proxy. Elle prend une à deux minutes.
 
 > Le CNI (Calico) n'est pas concerné par cette commande : sa mise à niveau, si besoin, suit un processus séparé propre à Calico, hors du périmètre de ce scénario.
+
+## 5. Vérifier la version des composants du control-plane
+
+Ces pods statiques tournent tous avec le label `tier=control-plane` : une seule commande suffit pour voir l'image (donc la version) de chacun d'eux.
+
+`kubectl get pods -n kube-system -l tier=control-plane -o custom-columns='NAME:.metadata.name,IMAGE:.spec.containers[0].image'`{{exec}}
+
+`kube-apiserver`, `kube-controller-manager` et `kube-scheduler` doivent afficher un tag d'image en `v1.36.x`. `etcd` a son propre schéma de version (indépendant de Kubernetes) : son numéro de version n'est pas censé changer ici.
