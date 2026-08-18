@@ -1,0 +1,9 @@
+{
+  "items": [
+    {
+      "path": "cluster-architecture-installation-configuration",
+      "title": "Cluster architecture, Installation et configuration",
+      "description": "Scénarios sur la mise en place et la configuration d'un cluster Kubernetes."
+    }
+  ]
+}
