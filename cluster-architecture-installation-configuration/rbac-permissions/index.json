@@ -1,0 +1,28 @@
+{
+  "title": "RBAC Kubernetes : gérer les permissions de l'utilisateur luke",
+  "description": "Cluster Kubernetes mono-nœud : configure RBAC pour que l'utilisateur luke puisse créer/supprimer des workloads dans le namespace jedi, et consulter (view) tous les namespaces sauf ceux préfixés kube-.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer/supprimer des workloads dans jedi",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Accès en lecture (view) hors des namespaces kube-*",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
