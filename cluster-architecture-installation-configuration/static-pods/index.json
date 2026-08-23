@@ -1,0 +1,28 @@
+{
+  "title": "Static Pods : manifests, kubelet et crictl",
+  "description": "Cluster Kubernetes mono-nœud déjà installé : crée un static pod à partir d'un manifeste, vérifie-le avec crictl, puis change le staticPodPath du kubelet en toute sécurité.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer un static pod à partir d'un manifeste",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Changer le staticPodPath du kubelet",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
