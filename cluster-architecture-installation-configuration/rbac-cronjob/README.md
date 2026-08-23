@@ -7,10 +7,9 @@ rbac-cronjob-nettoyeur/
 ├── index.json
 ├── intro.md
 ├── intro-background.sh     # namespace, SA leon (sans RBAC), CronJob, 3 pods busybox
-├── step1.md / step1-verify.sh   # diagnostic + Role/RoleBinding pour leon
-├── step2.md / step2-verify.sh   # kubectl create job --from + vérification
-├── step3.md / step3-verify.sh   # clonage de leon en leon-2 (export/vi/apply)
-├── step4.md / step4-verify.sh   # kubectl edit rolebinding : ajout de leon-2
+├── step1.md / step1-verify.sh   # diagnostic + Role/RoleBinding pour leon + vérif nettoyage auto
+├── step2.md / step2-verify.sh   # clonage de leon en leon-2 (export/vi/apply)
+├── step3.md / step3-verify.sh   # kubectl edit rolebinding : ajout de leon-2
 └── finish.md
 ```
 
@@ -56,19 +55,18 @@ rbac-cronjob-nettoyeur/
   plutôt que des arguments ajoutés à l'entrypoint par défaut de l'image
   — évite toute ambiguïté sur le comportement exact de busybox).
 
-- **CronJob planifié normalement (`*/1 * * * *`), pas de `suspend`.**
-  Une version précédente de ce scénario suspendait le CronJob dès sa
-  création (`spec.suspend: true`) et simulait sa première exécution via
-  un Job créé manuellement par le script de préparation
-  (`nettoyeur-auto-1`), pour éviter tout déclenchement automatique
-  pendant l'exercice. Revenu en arrière sur demande : le CronJob
-  fonctionne normalement, et `restartPolicy: Never` + `backoffLimit: 0`
-  (voir ci-dessous) suffisent à éviter qu'un Job donné ne s'acharne à
-  se relancer tout seul en cas d'échec. Le CronJob continue donc de
-  créer un nouveau Job à chaque tick de sa planification, comme un
-  CronJob normal — `step1.md` reste utilisable même si aucun Job
-  planifié ne s'est encore déclenché (formulation conditionnelle,
-  le diagnostic via `kubectl auth can-i` ne dépend pas du timing).
+- **CronJob planifié normalement (`*/1 * * * *`), pas de `suspend`, pas
+  de job manuel.** Versions précédentes de ce scénario ont exploré deux
+  approches différentes pour éviter qu'un CronJob en échec ne
+  s'acharne à se relancer : d'abord `spec.suspend: true` + un Job
+  simulé par le script de préparation, puis un déclenchement manuel
+  (`kubectl create job --from=cronjob/...`) en étape dédiée. Les deux
+  ont été abandonnées sur demande : `restartPolicy: Never` +
+  `backoffLimit: 0` (voir ci-dessous) suffisent à éviter qu'un Job
+  donné ne s'acharne à se relancer tout seul en cas d'échec, et c'est
+  le déclenchement automatique du CronJob lui-même (une fois les
+  droits corrigés) qui effectue le nettoyage — vérifié à la fin de
+  l'étape 1, plutôt que via un Job manuel dédié.
 
 - **`backoffLimit: 0` + `restartPolicy: Never` sur le jobTemplate**,
   pour qu'un Job donné échoue "en un seul coup" plutôt que de
@@ -78,8 +76,7 @@ rbac-cronjob-nettoyeur/
   passe en `Failed` dès le premier échec du conteneur ; avec
   `backoffLimit: 0`, le Job ne recrée pas non plus de nouveau pod
   ensuite. Ça ne concerne qu'un Job pris isolément : le CronJob, lui,
-  continuera de créer un nouveau Job au tick suivant de sa
-  planification (cf. point précédent).
+  continue de créer un nouveau Job à chaque tick de sa planification.
 
 - **`terminationGracePeriodSeconds: 1`**, demandé explicitement, sur le
   jobTemplate : réduit la période de grâce à la terminaison d'un pod
@@ -87,12 +84,17 @@ rbac-cronjob-nettoyeur/
   CronJob (notamment ceux en échec) se terminent rapidement plutôt que
   d'attendre inutilement.
 
-- **`kubectl create job nettoyeur-manuel --from=cronjob/nettoyeur -n ops`**
-  (étape 2, demandé explicitement) : copie le `jobTemplate` du CronJob
-  (y compris `serviceAccountName: leon`) dans un Job immédiat, sans
-  attendre la prochaine planification.
+- **Étape 1, section 5 : vérification du nettoyage automatique**
+  (demandé explicitement, remplace l'ancienne étape de job manuel).
+  Une fois les droits corrigés, l'élève observe (`watch kubectl get
+  pods -n ops`) la disparition des 3 pods cibles au prochain
+  déclenchement planifié du CronJob — jusqu'à 60 secondes d'attente,
+  selon le moment où les droits sont corrigés par rapport au prochain
+  tick. `step1-verify.sh` reflète ça avec une boucle d'attente de 90s
+  au total sur la disparition effective des 3 pods, après avoir
+  confirmé les droits RBAC.
 
-- **Étapes 3 et 4 : édition interactive (vi / `kubectl edit`), pas de
+- **Étapes 2 et 3 : édition interactive (vi / `kubectl edit`), pas de
   commandes 100% automatisables.** Contrairement au reste du projet
   (tout en `{{exec}}` cliquables), ces deux étapes demandent
   explicitement d'éditer un fichier (`vi sa.yaml`) puis un objet
@@ -106,7 +108,7 @@ rbac-cronjob-nettoyeur/
 - **Champs à retirer lors du clonage de `leon` en `leon-2`**
   (`resourceVersion`, `uid`, `creationTimestamp`) : ce sont des champs
   gérés par le serveur, présents dans l'export mais qui n'ont pas de
-  sens pour un nouvel objet — les lister explicitement dans `step3.md`
+  sens pour un nouvel objet — les lister explicitement dans `step2.md`
   évite que l'élève tente un `kubectl apply` avec des valeurs
   obsolètes/non pertinentes. Je n'ai pas listé de champ `secrets:` à
   retirer : depuis Kubernetes 1.24, les ServiceAccounts ne génèrent
@@ -116,10 +118,10 @@ rbac-cronjob-nettoyeur/
 - **`automountServiceAccountToken` est un champ de premier niveau**
   (sibling de `metadata:`), pas imbriqué dans `metadata:` ni dans un
   `spec:` (l'objet `ServiceAccount` n'a pas de `spec`). Je l'ai
-  explicitement signalé dans `step3.md` ("au même niveau que
+  explicitement signalé dans `step2.md` ("au même niveau que
   `metadata:`"), car c'est une erreur d'indentation facile à faire.
 
-- **Étape 4 : ajout de `leon-2` au `RoleBinding` existant plutôt que
+- **Étape 3 : ajout de `leon-2` au `RoleBinding` existant plutôt que
   création d'un nouveau `RoleBinding`** (demandé explicitement) — l'occasion
   de montrer qu'un `RoleBinding` peut lier plusieurs sujets à un même
   `Role`, sans duplication.
@@ -129,19 +131,21 @@ rbac-cronjob-nettoyeur/
 - https://kubernetes.io/docs/reference/access-authn-authz/rbac/
 - https://kubernetes.io/docs/concepts/security/service-accounts/
 - https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/
-- https://kubernetes.io/docs/reference/kubectl/generated/kubectl_create/kubectl_create_job/
 - https://kubernetes.io/docs/reference/kubectl/generated/kubectl_edit/
 
 ## Limites connues
 
 - Testé uniquement "sur le papier" : pas d'accès direct à Killercoda.
 - Le temps de pull de l'image `bitnami/kubectl:latest` n'a pas pu être
-  vérifié en conditions réelles ; si le premier déclenchement (planifié
-  ou manuel via `nettoyeur-manuel` à l'étape 2) est lent à cause du pull
-  d'image, le timeout de 90s dans `step2-verify.sh` pourrait s'avérer un
-  peu juste — à ajuster après un premier test réel.
+  vérifié en conditions réelles ; si un déclenchement planifié est lent
+  à cause du pull d'image, le timeout de 90s dans `step1-verify.sh`
+  pourrait s'avérer un peu juste — à ajuster après un premier test
+  réel.
 - Comme le CronJob se déclenche automatiquement toutes les minutes dès
   le début du scénario, un ou plusieurs Jobs en échec (et leurs pods)
   peuvent s'accumuler dans `ops` avant que l'élève ne corrige les
   droits ; ça n'empêche pas le scénario de fonctionner, mais ça peut
   rendre `kubectl get pods -n ops` un peu bruyant à l'étape 1.
+- La vérification finale de l'étape 1 peut prendre jusqu'à une minute
+  (le temps que le CronJob se déclenche à nouveau) après la correction
+  des droits : c'est normal et attendu, pas une erreur.

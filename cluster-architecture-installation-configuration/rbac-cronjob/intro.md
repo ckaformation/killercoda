@@ -14,9 +14,8 @@ Bienvenue ! Ce scénario porte à nouveau sur RBAC, cette fois appliqué à un *
 
 Le CronJob `nettoyeur` échoue : le ServiceAccount `leon` n'a **aucun droit RBAC**. Ton objectif :
 
-1. Diagnostiquer le problème et donner à `leon` les droits nécessaires.
-2. Déclencher un nettoyage manuel pour vérifier que tout fonctionne.
-3. Cloner `leon` en un second ServiceAccount, `leon-2`, avec `automountServiceAccountToken: false`.
-4. Étendre le `RoleBinding` existant pour que `leon-2` hérite des mêmes droits que `leon`.
+1. Diagnostiquer le problème, donner à `leon` les droits nécessaires, et vérifier que le nettoyage automatique fonctionne.
+2. Cloner `leon` en un second ServiceAccount, `leon-2`, avec `automountServiceAccountToken: false`.
+3. Étendre le `RoleBinding` existant pour que `leon-2` hérite des mêmes droits que `leon`.
 
 C'est parti !

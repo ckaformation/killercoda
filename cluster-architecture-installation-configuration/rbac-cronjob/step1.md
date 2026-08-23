@@ -47,3 +47,15 @@ Les deux doivent répondre `no`.
 `k auth can-i delete pods --as=system:serviceaccount:ops:leon -n ops`{{exec}}
 
 Les deux doivent maintenant répondre `yes`.
+
+## 5. Vérifier que le nettoyage automatique fonctionne
+
+`leon` a maintenant les droits nécessaires : au prochain déclenchement planifié du CronJob (au plus tard dans la minute qui vient), les pods `Completed` du namespace `ops` devraient être supprimés automatiquement, sans aucune action supplémentaire de ta part.
+
+`watch kubectl get pods -n ops`{{exec}}
+
+Patiente jusqu'à ce que `pod-a-nettoyer-1`, `pod-a-nettoyer-2` et `pod-a-nettoyer-3` disparaissent de la liste, puis quitte avec `Ctrl+C`.
+
+`k get jobs -n ops`{{exec}}
+
+Le Job le plus récent doit maintenant afficher `1/1` dans la colonne `COMPLETIONS`.
