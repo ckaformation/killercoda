@@ -41,7 +41,7 @@ metadata:
   namespace: ops
 spec:
   schedule: "*/1 * * * *"
-  suspend: true
+  suspend: false
   jobTemplate:
     spec:
       backoffLimit: 0
@@ -49,6 +49,7 @@ spec:
         spec:
           serviceAccountName: leon
           restartPolicy: Never
+          terminationGracePeriodSeconds: 1
           containers:
           - name: nettoyeur
             image: bitnami/kubectl:latest
