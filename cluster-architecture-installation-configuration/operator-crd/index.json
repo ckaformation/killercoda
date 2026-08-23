@@ -1,0 +1,28 @@
+{
+  "title": "Opérateur Kubernetes : installation et CRD",
+  "description": "Cluster mono-nœud avec 3 namespaces (luke, ben, leia) déjà créés. Installe un opérateur simplifié scopé à ces namespaces, puis crée une CRD qu'il interprète pour générer des ConfigMaps.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Installer l'opérateur",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Créer la CRD et une ressource personnalisée",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
