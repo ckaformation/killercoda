@@ -1,0 +1,38 @@
+{
+  "title": "RBAC Kubernetes : réparer un CronJob de nettoyage",
+  "description": "Le CronJob nettoyeur, dans le namespace ops, échoue faute de droits RBAC pour son ServiceAccount leon. Diagnostique le problème, corrige les droits, puis déclenche un nettoyage manuel.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Diagnostiquer puis corriger les droits RBAC",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Déclencher le nettoyage manuellement",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Cloner le ServiceAccount leon en leon-2",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Ajouter leon-2 au RoleBinding existant",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
