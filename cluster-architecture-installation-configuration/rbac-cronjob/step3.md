@@ -1,45 +1,29 @@
-# Étape 3 — Cloner le ServiceAccount leon en leon-2
+# Étape 3 — Ajouter leon-2 au RoleBinding existant
 
 ## Objectif
 
-Créer un nouveau ServiceAccount, **leon-2**, basé sur **leon**, avec une différence : `automountServiceAccountToken: false` (le token du ServiceAccount ne doit pas être monté automatiquement dans les pods qui l'utiliseraient).
+Plutôt que de créer un nouveau `RoleBinding` pour `leon-2`, on va l'ajouter comme second sujet du `RoleBinding` existant (`leon-ops-pod-cleaner`, créé à l'étape 1), qui lie déjà `leon` au `Role` `ops-pod-cleaner`.
 
-## 1. Exporter leon en YAML
+## 1. Éditer le RoleBinding
 
-`kubectl get serviceaccount leon -n ops -o yaml > sa.yaml`{{exec}}
+`kubectl edit rolebinding leon-ops-pod-cleaner -n ops`{{exec}}
 
-## 2. Éditer le fichier avec vi
-
-`vi sa.yaml`{{exec}}
-
-Apporte les modifications suivantes :
-
-- sous `metadata:`, change `name: leon` en `name: leon-2` ;
-- supprime les champs générés par le serveur, qui n'ont pas de sens pour un nouvel objet : `resourceVersion`, `uid`, `creationTimestamp` ;
-- ajoute, **au même niveau que `metadata:`** (donc pas à l'intérieur de `metadata:`), la ligne :
-  ```
-  automountServiceAccountToken: false
-  ```
-
-Le fichier final doit ressembler à ceci :
+Dans la section `subjects:`, ajoute une nouvelle entrée pour `leon-2`, sur le même modèle que celle de `leon` :
 
 ```yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
+subjects:
+- kind: ServiceAccount
+  name: leon
+  namespace: ops
+- kind: ServiceAccount
   name: leon-2
   namespace: ops
-automountServiceAccountToken: false
 ```
 
 Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
 
-## 3. Appliquer le fichier
+## 2. Vérifier
 
-`kubectl apply -f sa.yaml`{{exec}}
+`k auth can-i delete pods --as=system:serviceaccount:ops:leon-2 -n ops`{{exec}}
 
-## 4. Vérifier
-
-`k get sa leon-2 -n ops -o yaml`{{exec}}
-
-Le champ `automountServiceAccountToken: false` doit apparaître dans le résultat.
+Doit répondre `yes` : `leon-2` hérite maintenant des mêmes droits que `leon`, via ce `RoleBinding` partagé.

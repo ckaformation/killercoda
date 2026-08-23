@@ -1,19 +1,45 @@
-# Étape 2 — Déclencher le nettoyage manuellement
+# Étape 2 — Cloner le ServiceAccount leon en leon-2
 
-Maintenant que `leon` a les droits nécessaires, on va déclencher immédiatement une exécution du CronJob, sans attendre sa prochaine planification, avec `kubectl create job --from`.
+## Objectif
 
-## 1. Créer un Job à partir du CronJob
+Créer un nouveau ServiceAccount, **leon-2**, basé sur **leon**, avec une différence : `automountServiceAccountToken: false` (le token du ServiceAccount ne doit pas être monté automatiquement dans les pods qui l'utiliseraient).
 
-`k create job nettoyeur-manuel --from=cronjob/nettoyeur -n ops`{{exec}}
+## 1. Exporter leon en YAML
 
-## 2. Suivre son exécution
+`kubectl get serviceaccount leon -n ops -o yaml > sa.yaml`{{exec}}
 
-`watch kubectl get jobs -n ops`{{exec}}
+## 2. Éditer le fichier avec vi
 
-Attends que `nettoyeur-manuel` affiche `1/1` dans la colonne `COMPLETIONS`, puis quitte avec `Ctrl+C`.
+`vi sa.yaml`{{exec}}
 
-## 3. Vérifier que les pods ont bien été supprimés
+Apporte les modifications suivantes :
 
-`k get pods -n ops`{{exec}}
+- sous `metadata:`, change `name: leon` en `name: leon-2` ;
+- supprime les champs générés par le serveur, qui n'ont pas de sens pour un nouvel objet : `resourceVersion`, `uid`, `creationTimestamp` ;
+- ajoute, **au même niveau que `metadata:`** (donc pas à l'intérieur de `metadata:`), la ligne :
+  ```
+  automountServiceAccountToken: false
+  ```
 
-Les pods `pod-a-nettoyer-1`, `pod-a-nettoyer-2` et `pod-a-nettoyer-3` ne doivent plus apparaître : `nettoyeur-manuel` les a supprimés grâce aux droits qu'on vient d'accorder à `leon`.
+Le fichier final doit ressembler à ceci :
+
+```yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: leon-2
+  namespace: ops
+automountServiceAccountToken: false
+```
+
+Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
+
+## 3. Appliquer le fichier
+
+`kubectl apply -f sa.yaml`{{exec}}
+
+## 4. Vérifier
+
+`k get sa leon-2 -n ops -o yaml`{{exec}}
+
+Le champ `automountServiceAccountToken: false` doit apparaître dans le résultat.

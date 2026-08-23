@@ -1,15 +1,14 @@
 #!/bin/bash
-if ! kubectl wait --for=condition=complete job/nettoyeur-manuel -n ops --timeout=90s >/dev/null 2>&1; then
-  echo "Le job nettoyeur-manuel n'est pas encore Complete."
+if ! kubectl get sa leon-2 -n ops >/dev/null 2>&1; then
+  echo "Le ServiceAccount leon-2 n'existe pas encore."
   exit 1
 fi
 
-for i in 1 2 3; do
-  if kubectl get "pod/pod-a-nettoyer-$i" -n ops >/dev/null 2>&1; then
-    echo "pod-a-nettoyer-$i existe encore : il aurait dû être supprimé par nettoyeur-manuel."
-    exit 1
-  fi
-done
+VALUE=$(kubectl get sa leon-2 -n ops -o jsonpath='{.automountServiceAccountToken}' 2>/dev/null)
+if [ "$VALUE" != "false" ]; then
+  echo "leon-2 devrait avoir automountServiceAccountToken: false (obtenu: '$VALUE')"
+  exit 1
+fi
 
-echo "nettoyeur-manuel a bien nettoyé les pods Completed."
+echo "leon-2 existe, avec automountServiceAccountToken: false."
 exit 0
