@@ -9,7 +9,7 @@ TIMEOUT=40
 ELAPSED=0
 while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
   MISSING=0
-  for ns in team-red team-green team-blue; do
+  for ns in rogue-1 rogue-2 rogue-3; do
     LABEL=$(kubectl get namespace "$ns" -o jsonpath='{.metadata.labels.managed-by}' 2>/dev/null)
     [ "$LABEL" = "namespace-operator" ] || MISSING=$((MISSING + 1))
   done

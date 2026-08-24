@@ -15,9 +15,9 @@ metadata:
   name: my-teams
 spec:
   namespaces:
-    - team-red
-    - team-green
-    - team-blue
+    - rogue-1
+    - rogue-2
+    - rogue-3
 ```
 
 Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
@@ -34,7 +34,7 @@ L'opérateur interroge l'API toutes les 10 secondes : laisse-lui un peu de temps
 
 `watch kubectl get namespaces`{{exec}}
 
-Attends l'apparition de `team-red`, `team-green` et `team-blue`, puis quitte avec `Ctrl+C`.
+Attends l'apparition de `rogue-1`, `rogue-2` et `rogue-3`, puis quitte avec `Ctrl+C`.
 
 `k logs -n operators namespace-operator-0 --tail=10`{{exec}}
 
