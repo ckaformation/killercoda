@@ -1,0 +1,33 @@
+{
+  "title": "Gestion des certificats Kubernetes avec kubeadm",
+  "description": "Cluster mono-nœud déjà installé : vérifie l'expiration des certificats du control-plane, renouvelle-les, redémarre le control-plane, puis inspecte le certificat servi en direct via curl.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Vérifier la date d'expiration des certificats",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Renouveler les certificats et redémarrer le control-plane",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Inspecter le certificat servi en direct",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
