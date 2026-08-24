@@ -1,0 +1,33 @@
+{
+  "title": "Init containers, Secrets et ConfigMaps",
+  "description": "Un Deployment avec un init container cassé (mauvais mountPath) qui doit copier un Secret. Corrige-le, ajoute une clé au Secret (et comprends pourquoi un rollout est nécessaire), puis monte un ConfigMap additionnel.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Corriger le mountPath de l'init container",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Ajouter une clé au Secret et faire un rollout",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Monter un ConfigMap additionnel",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
