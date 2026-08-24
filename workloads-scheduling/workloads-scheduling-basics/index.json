@@ -1,0 +1,43 @@
+{
+  "title": "Workloads : Pod, Deployment, StatefulSet et rollouts",
+  "description": "Cluster mono-nœud déjà installé : déploie un Pod nu, un Deployment (scaling, révisions, rollback), puis un StatefulSet redis (OnDelete, rollback).",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Déployer un Pod nu",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Déployer via un Deployment et le scaler",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Incrémenter les révisions et faire un rollback",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "StatefulSet redis : modifier le CPU request (OnDelete)",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      },
+      {
+        "title": "Rollback du StatefulSet",
+        "text": "step5.md",
+        "verify": "step5-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
