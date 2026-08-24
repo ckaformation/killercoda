@@ -24,7 +24,7 @@ Modifier le `StatefulSet` déclenche le remplacement de son pod avec la nouvelle
 
 ## 3. Observer l'échec
 
-`watch kubectl get namespace team-red -o jsonpath="{.metadata.labels}"`{{exec}}
+`watch kubectl get namespace rogue-1 -o jsonpath="{.metadata.labels}"`{{exec}}
 
 Le label n'apparaît pas. Quitte avec `Ctrl+C`, puis regarde les logs :
 
@@ -50,6 +50,6 @@ Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
 
 Doit maintenant répondre `yes`. Laisse à l'opérateur le temps de son prochain cycle (jusqu'à 10 secondes), puis :
 
-`k get namespace team-red team-green team-blue --show-labels`{{exec}}
+`k get namespace rogue-1 rogue-2 rogue-3 --show-labels`{{exec}}
 
 Les trois namespaces doivent maintenant afficher le label `managed-by=namespace-operator`.

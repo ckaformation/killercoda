@@ -8,7 +8,7 @@ TIMEOUT=40
 ELAPSED=0
 while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
   MISSING=0
-  for ns in team-red team-green team-blue; do
+  for ns in rogue-1 rogue-2 rogue-3; do
     kubectl get namespace "$ns" >/dev/null 2>&1 || MISSING=$((MISSING + 1))
   done
   [ "$MISSING" -eq 0 ] && break
@@ -17,7 +17,7 @@ while [ "$ELAPSED" -lt "$TIMEOUT" ]; do
 done
 
 if [ "$MISSING" -ne 0 ]; then
-  echo "Il manque encore $MISSING des 3 namespaces attendus (team-red, team-green, team-blue)."
+  echo "Il manque encore $MISSING des 3 namespaces attendus (rogue-1, rogue-2, rogue-3)."
   exit 1
 fi
 
