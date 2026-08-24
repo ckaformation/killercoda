@@ -1,0 +1,38 @@
+{
+  "title": "Opérateur Kubernetes : StatefulSet, CRD et évolution du RBAC",
+  "description": "Déploie un opérateur (StatefulSet) qui provisionne 3 namespaces à partir d'une CRD, puis fais-le évoluer pour qu'il labellise ces namespaces, en ajustant le ClusterRole en conséquence.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Déployer le StatefulSet de l'opérateur",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Déployer la CustomResourceDefinition",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Déployer la ressource personnalisée",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Faire évoluer l'opérateur et son RBAC",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
