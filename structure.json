@@ -4,6 +4,11 @@
       "path": "cluster-architecture-installation-configuration",
       "title": "Cluster architecture, Installation et configuration",
       "description": "Scénarios sur la mise en place et la configuration d'un cluster Kubernetes."
+    },
+    {
+      "path": "workloads-scheduling",
+      "title": "Workloads & Scheduling",
+      "description": "Scénarios sur les objets de charge applicative (Pod, Deployment, StatefulSet, CronJob...) et leur ordonnancement."
     }
   ]
 }
