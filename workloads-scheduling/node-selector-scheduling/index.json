@@ -1,0 +1,38 @@
+{
+  "title": "nodeSelector et scheduling",
+  "description": "Cluster à 2 nœuds déjà installé. Explore le nodeSelector à travers 2 Deployments, observe l'effet du retrait d'un label, puis découvre le rôle exact du kube-scheduler en le désactivant.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Ajouter un label spécifique sur node01",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Ajouter un nodeSelector aux deux Deployments",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Retirer le label sur controlplane et observer",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Arrêter le kube-scheduler et scheduler sans lui",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
