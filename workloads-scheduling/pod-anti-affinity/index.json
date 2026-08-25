@@ -1,0 +1,28 @@
+{
+  "title": "Pod Anti-Affinity",
+  "description": "Un pod yoda déjà déployé. Ajoute une pod anti-affinity pour qu'un autre pod l'évite systématiquement, puis observe ce qui se passe quand plus aucun nœud ne satisfait cette contrainte.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Ajouter une pod anti-affinity à luke",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Saturer les deux nœuds avec le label app=yoda",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
