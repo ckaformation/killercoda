@@ -25,7 +25,7 @@ spec:
         - name: probe-droid
           image: bash:5
           command:
-            - /bin/bash
+            - bash
             - -c
             - |
               while true; do

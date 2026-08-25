@@ -60,6 +60,13 @@ daemonset-hostpath/
   "sonde en reconnaissance", pas de contrainte technique particulière
   sur le nom choisi.
 
+- **`command: [bash, -c, ...]` plutôt que `[/bin/bash, -c, ...]`**
+  (correctif appliqué après un premier test réel) : sur l'image
+  `bash:5`, le binaire n'est pas à l'emplacement `/bin/bash` — appeler
+  simplement `bash` et laisser le `PATH` du conteneur le résoudre
+  fonctionne, alors que le chemin absolu provoquait une erreur "not
+  found" au démarrage du conteneur.
+
 ## Sources officielles utilisées
 
 - https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/
