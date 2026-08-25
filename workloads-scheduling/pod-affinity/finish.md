@@ -2,9 +2,9 @@
 
 Tu viens d'explorer la pod affinity, un mécanisme de placement relatif — "sur le même nœud qu'un autre pod" — plutôt qu'absolu comme `nodeSelector` ou les taints :
 
-1. **Découverte de l'immuabilité** : `spec.affinity` (comme la plupart des champs d'un `Pod`) ne peut pas être modifié sur un pod déjà créé — il faut le supprimer et le recréer avec la nouvelle spec, généralement à partir de son fichier YAML.
-2. **Pod affinity** : `luke` configuré pour se placer sur le même nœud qu'un pod portant `app=yoda`, via `requiredDuringSchedulingIgnoredDuringExecution` et `topologyKey: kubernetes.io/hostname`.
-3. **Effet relatif, pas figé** : en changeant uniquement l'emplacement de `yoda` (via son `nodeName`) et en recréant les deux pods dans le bon ordre, `luke` a suivi automatiquement — sans qu'on retouche sa propre configuration.
+1. **Pod affinity** : `luke`, créé directement avec une affinity ciblant `yoda` (via `requiredDuringSchedulingIgnoredDuringExecution` et `topologyKey: kubernetes.io/hostname`), s'est placé sur le même nœud que lui, sans autre contrainte.
+2. **Découverte de l'immuabilité** : tenter de changer le `nodeName` de `yoda` sur le pod déjà créé échoue — `spec.nodeName`, comme `spec.affinity`, ne peut pas être modifié après coup. Il faut supprimer et recréer, généralement à partir du fichier YAML.
+3. **Effet relatif, pas figé** : en changeant uniquement l'emplacement de `yoda` et en recréant les deux pods dans le bon ordre, `luke` a suivi automatiquement — sans qu'on retouche sa propre configuration.
 
 ## Points clés à retenir
 

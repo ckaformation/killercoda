@@ -6,34 +6,30 @@
 pod-affinity/
 ├── index.json
 ├── intro.md
-├── intro-background.sh     # taint control-plane retiré, pods yoda/luke + YAML sur disque
-├── step1.md / step1-verify.sh   # tentative d'edit (échec), édition du fichier, delete+recreate
-├── step2.md / step2-verify.sh   # delete des 2 pods, nodeName de yoda changé, luke suit
+├── intro-background.sh     # taint control-plane retiré, seul yoda tourne, luke.yaml déposé (pas appliqué)
+├── step1.md / step1-verify.sh   # complétion de luke.yaml (affinity) + premier lancement
+├── step2.md / step2-verify.sh   # tentative d'edit sur yoda (échec), delete+recreate, luke suit
 └── finish.md
 ```
 
 ## Choix effectués et pourquoi
 
-- **Immuabilité de `spec.affinity` sur un pod déjà créé, rendue explicite
-  et vécue par l'élève** (étape 1) : la demande décrit "l'élève doit
-  modifier un autre pod" sans préciser la mécanique exacte. Techniquement,
-  un `kubectl edit` direct sur un pod vivant pour y ajouter
-  `spec.affinity` est rejeté par l'API server (seuls quelques champs
-  précis — image des conteneurs, tolerations en ajout, quelques autres —
-  restent modifiables après création). Plutôt que de contourner
-  silencieusement ce point en ne montrant que la bonne méthode, l'étape 1
-  fait tenter l'edit direct à l'élève, montre l'échec, puis explique
-  pourquoi avant de passer à la méthode qui fonctionne (éditer le
-  fichier, `delete` + `apply`). Choix pédagogique assumé : c'est aussi
-  l'occasion de comprendre pourquoi des contrôleurs comme `Deployment`
-  existent.
+- **`luke` n'existe pas au démarrage : c'est l'élève qui le lance, à
+  l'étape 1, après avoir complété son fichier avec la pod affinity.**
+  Demandé explicitement (correctif apporté après une première version
+  où les deux pods étaient déjà en cours d'exécution dès le départ).
+  Conséquence : la démonstration de l'immuabilité de `spec.affinity`
+  (tenter un `kubectl edit` et observer l'échec) n'a plus de sens à
+  l'étape 1, puisqu'il n'y a rien à éditer sur un pod qui n'existe pas
+  encore — je l'ai déplacée à l'étape 2, où elle s'applique tout aussi
+  bien à `spec.nodeName` (également immuable), qu'il faut de toute
+  façon modifier à ce moment-là.
 
-- **Les deux pods (`yoda` et `luke`) ont leurs définitions YAML déposées
-  sur disque dès le script `background`**, pas seulement `yoda`
-  (explicitement demandé) : `luke` a lui aussi besoin d'être
-  supprimé/recréé à partir d'un fichier à l'étape 1, pour la raison
-  d'immuabilité ci-dessus — impossible de le faire proprement sans que
-  son YAML soit disponible.
+- **Les deux fichiers YAML (`yoda.yaml`, `luke.yaml`) sont malgré tout
+  déposés sur disque dès le script `background`** : `yoda.yaml` parce
+  que le pod correspondant tourne déjà (accessible pour modification
+  future, demandé explicitement pour ce pod) ; `luke.yaml` parce que
+  l'élève doit le compléter avant de le lancer pour la première fois.
 
 - **Retrait explicite du taint control-plane par défaut**, comme dans
   `node-selector-scheduling` et `taints-tolerations`, mais pour une

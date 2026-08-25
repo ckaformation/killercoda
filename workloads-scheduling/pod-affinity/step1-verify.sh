@@ -23,5 +23,5 @@ if [ "$YODA_NODE" != "$LUKE_NODE" ]; then
   exit 1
 fi
 
-echo "luke a bien été recréé avec une pod affinity vers yoda, et tourne sur le même nœud."
+echo "luke a bien été créé avec une pod affinity vers yoda, et tourne sur le même nœud."
 exit 0
