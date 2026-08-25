@@ -1,0 +1,28 @@
+{
+  "title": "DaemonSet et hostPath",
+  "description": "Crée un DaemonSet écrivant sur un volume hostPath, puis restreins-le à un seul nœud via nodeSelector et observe la disparition de son empreinte sur l'autre.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer le DaemonSet avec un hostPath",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Restreindre le DaemonSet à node01",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
