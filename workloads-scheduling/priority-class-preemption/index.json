@@ -1,0 +1,28 @@
+{
+  "title": "PriorityClass et Pod Preemption",
+  "description": "Deux namespaces applicatifs, trois niveaux de priorité. Identifie le pod le plus prioritaire dans l'un, puis observe la préemption automatique dans l'autre quand la mémoire manque.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Identifier et supprimer le pod le plus prioritaire",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Déclencher une préemption par manque de mémoire",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
