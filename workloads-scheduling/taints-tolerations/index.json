@@ -1,0 +1,38 @@
+{
+  "title": "Taints et Tolerations",
+  "description": "Cluster à 2 nœuds déjà installé. Applique un taint NoSchedule puis NoExecute sur controlplane, et adapte un seul des deux Deployments pour qu'il continue à s'y déployer.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Taint NoSchedule sur controlplane",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Tolérer le taint NoSchedule",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Taint NoExecute sur controlplane",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Tolérer le taint NoExecute",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
