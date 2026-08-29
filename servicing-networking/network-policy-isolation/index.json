@@ -1,0 +1,33 @@
+{
+  "title": "NetworkPolicy : isolation par défaut et exceptions ciblées",
+  "description": "Deux namespaces applicatifs qui communiquent librement. Ferme tout par défaut, rouvre finement l'intra-namespace, puis une exception inter-namespaces précise — avec un piège classique de syntaxe YAML au menu.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Deny by default dans les deux namespaces",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Autoriser luke vers obi-wan (intra-namespace)",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Autoriser luke vers leia (inter-namespaces)",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
