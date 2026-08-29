@@ -4,7 +4,7 @@ Bienvenue dans le premier scénario du chapitre Services & Networking ! Par déf
 
 ## Ce qui est déjà en place
 
-- Un cluster Kubernetes mono-nœud, avec **Calico** comme CNI (explicitement installé pour ce scénario : c'est un des CNI qui implémentent réellement les `NetworkPolicy` — tous ne le font pas).
+- Un cluster Kubernetes mono-nœud, avec **Cilium** comme CNI (déjà en place nativement sur cet environnement) : un des CNI qui implémentent réellement les `NetworkPolicy` — tous ne le font pas.
 - Deux namespaces applicatifs : **tatooine** et **alderaan**, qui peuvent aujourd'hui discuter librement entre eux, et en interne.
 - Dans `tatooine` : deux pods, `luke` et `obi-wan` (tous deux capables de faire des `curl`, en plus de servir une page web basique).
 - Dans `alderaan` : un pod, `leia`.
