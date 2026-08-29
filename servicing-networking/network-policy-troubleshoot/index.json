@@ -1,0 +1,28 @@
+{
+  "title": "Troubleshooting NetworkPolicy",
+  "description": "Deux cas de panne NetworkPolicy à diagnostiquer et corriger soi-même : un matchLabels erroné, puis une confusion classique entre logique ET et OU.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Cas 1 : matchLabels erroné entre les namespaces a et b",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Cas 2 : logique ET au lieu de OU entre les namespaces c et d",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
