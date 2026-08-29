@@ -12,9 +12,9 @@ Essaie de résoudre chaque cas par toi-même avant de dérouler l'un ou l'autre.
 ## Ce qui est déjà en place
 
 - Un cluster Kubernetes mono-nœud, CNI Cilium (supporte les `NetworkPolicy`).
-- Quatre namespaces : **a**, **b**, **c**, **d**.
-- Dans **a** : le pod `han`. Dans **b** : le pod `chewie`. Une `NetworkPolicy` dans `b` est censée autoriser `han` à le joindre — mais ça ne fonctionne pas.
-- Dans **c** : le pod `lando`. Dans **d** : les pods `wedge` et `biggs`. Une `NetworkPolicy` dans `d` est censée autoriser à la fois le trafic venant de `c`, et le trafic entre les pods de `d` eux-mêmes — mais rien ne passe.
+- Quatre namespaces : **dagobah**, **endor**, **kamino**, **mustafar**.
+- Dans **dagobah** : le pod `han`. Dans **endor** : le pod `chewie`. Une `NetworkPolicy` dans `endor` est censée autoriser `han` à le joindre — mais ça ne fonctionne pas.
+- Dans **kamino** : le pod `lando`. Dans **mustafar** : les pods `wedge` et `biggs`. Une `NetworkPolicy` dans `mustafar` est censée autoriser à la fois le trafic venant de `kamino`, et le trafic entre les pods de `mustafar` eux-mêmes — mais rien ne passe.
 - Un raccourci `k` (identique à `kubectl`).
 
 C'est parti !

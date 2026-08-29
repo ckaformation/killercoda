@@ -6,78 +6,58 @@
 netpol-troubleshooting/
 ├── index.json
 ├── intro.md
-├── intro-background.sh     # namespaces a/b/c/d, 5 pods, 2 NetworkPolicy cassées
-├── step1.md / step1-verify.sh   # cas 1 : matchLabels erroné (a -> b)
-├── step2.md / step2-verify.sh   # cas 2 : ET au lieu de OU (c/d)
+├── intro-background.sh     # namespaces dagobah/endor/kamino/mustafar, 5 pods, 2 NetworkPolicy cassées
+├── step1.md / step1-verify.sh   # cas 1 : matchLabels erroné (dagobah -> endor)
+├── step2.md / step2-verify.sh   # cas 2 : ET au lieu de OU (kamino/mustafar)
 └── finish.md
 ```
 
-## Choix effectués et pourquoi — le point le plus incertain
+## Corrections apportées suite au premier retour de test
 
-**Boutons "Tip" et "Solution" implémentés en HTML `<details>/<summary>`**,
-demandé explicitement. Je n'ai trouvé **aucune documentation
-spécifique à Killercoda** confirmant que son moteur de rendu Markdown
-laisse passer du HTML brut. `<details>/<summary>` est le standard
-quasi universel pour ce genre de contenu repliable (GitHub, GitLab, la
-plupart des générateurs de sites statiques), donc c'est le choix le
-mieux justifié dont je dispose — mais je ne peux pas garantir qu'il
-s'affichera correctement sur Killercoda tant que ce n'est pas testé.
-**À vérifier en priorité absolue lors du premier test réel.** Si ça ne
-fonctionne pas, la solution de repli la plus simple serait de déplacer
-le contenu "Tip"/"Solution" dans des fichiers séparés, révélés
-seulement en donnant leur chemin à l'élève (moins élégant, mais
-garanti fonctionner avec le Markdown déjà confirmé ailleurs dans ce
-cursus).
+- **Confirmé fonctionnel** : les boutons Tip/Solution en `<details>/<summary>`
+  s'affichent correctement sur Killercoda.
 
-## Autres choix
+- **Namespaces renommés** (`a`/`b`/`c`/`d` → `dagobah`/`endor`/`kamino`/`mustafar`) :
+  les lettres d'origine dans la demande étaient des exemples de
+  vocabulaire, pas des noms à reprendre littéralement — corrigé avec
+  des noms à thème Star Wars, cohérents avec le reste du cursus.
 
-- **Namespaces nommés littéralement `a`, `b`, `c`, `d`**, reprenant
-  exactement le vocabulaire de la demande, plutôt qu'un thème Star
-  Wars pour les namespaces eux-mêmes : dans un exercice de
-  troubleshooting, la correspondance directe avec l'énoncé prime sur
-  la thématisation. Les pods, en revanche, restent à thème
-  (`han`/`chewie`, `lando`/`wedge`/`biggs`), cohérent avec le reste du
-  cursus.
+- **Titres et description neutralisés** (`index.json`, titres de
+  `step1.md`/`step2.md`) : les versions précédentes révélaient la
+  nature du bug avant même que l'élève ne commence à chercher
+  ("matchLabels erroné", "logique ET au lieu de OU" apparaissaient
+  dans les titres visibles dès la liste des étapes). Les titres ne
+  décrivent plus que le **symptôme** ("han ne parvient pas à joindre
+  chewie", "communications bloquées dans mustafar"), jamais la cause.
+
+- **Cas 2 : suppression du second bug (mauvaise valeur de
+  `podSelector`).** Erreur de conception initiale : j'avais combiné
+  deux fautes (ET au lieu de OU, **et** une valeur de label erronée),
+  ce qui n'était pas demandé et diluait l'essence de l'exercice. Le
+  `podSelector.matchLabels: squad: rebel` est maintenant **la bonne
+  valeur dès le départ** (`wedge` et `biggs` portent réellement ce
+  label) : le seul problème restant est la combinaison en ET plutôt
+  qu'en OU. L'élève doit constater que le label est correct — pour
+  mieux comprendre que le problème est ailleurs, dans la structure YAML
+  elle-même, pas dans les valeurs.
+
+## Autres choix (inchangés depuis la version précédente)
 
 - **Backend `kubernetes-kubeadm-1node` utilisé tel quel** (CNI Cilium
-  natif, confirmé par toi dans `netpol-isolation`) : script `background`
-  léger, sans reset ni réinstallation, cohérent avec le retour en
-  arrière déjà effectué sur `netpol-isolation`.
+  natif, confirmé dans `netpol-isolation`).
 
-- **Bug 1 (étape 1) : valeur de label erronée sur un `namespaceSelector`
-  seul** (`project: beta` au lieu de `project: alpha`), volontairement
-  simple : un seul sélecteur en cause, pour une première prise en main
-  du diagnostic avant la complexité de l'étape 2.
+- **`ports: [{protocol: TCP, port: 80}]` explicite sur la policy du cas
+  2**, demandé explicitement.
 
-- **Bug 2 (étape 2) : double panne cumulée**, demandée explicitement
-  ("une règle AND et un mauvais podSelector matchlabel") — `ET` au
-  lieu de `OU` (namespaceSelector et podSelector combinés dans le même
-  élément de liste), **et** une valeur de `podSelector` erronée
-  (`squad: empire` au lieu de `squad: rebel`). Corriger un seul des
-  deux ne suffit pas : soit la syntaxe reste en ET (donc rien ne
-  correspond jamais, même avec la bonne valeur), soit la valeur reste
-  fausse (donc le OU fonctionnerait pour `c` mais pas pour le trafic
-  interne à `d`).
+- **`kubernetes.io/metadata.name: kamino`** pour le `namespaceSelector`
+  du cas 2 (label posé automatiquement par l'API server), plutôt qu'un
+  label custom à poser sur `kamino`.
 
-- **`ports: [{protocol: TCP, port: 80}]` explicite sur la policy de
-  l'étape 2**, demandé explicitement ("sur le port 80") — absent de la
-  policy de l'étape 1, qui n'a pas cette exigence dans la demande.
+- **Tous les pods sous `nginx:alpine` + `curl` installé au démarrage** :
+  chacun doit pouvoir être à la fois source et cible selon le test.
 
-- **`kubernetes.io/metadata.name: c` pour le `namespaceSelector` de
-  l'étape 2** (label posé automatiquement par l'API server depuis
-  Kubernetes 1.21), plutôt qu'un label custom sur `c` : évite d'avoir à
-  labelliser `c` manuellement, cohérent avec `netpol-isolation`.
-
-- **Tous les pods sous `nginx:alpine` + `curl` installé au démarrage**,
-  comme dans `netpol-isolation` : chacun doit pouvoir être à la fois
-  source et cible selon le test (notamment `wedge`, testé comme cible
-  depuis `lando` puis comme source vers `biggs`).
-
-- **`verify.sh` teste uniquement le résultat fonctionnel (curl qui
-  passe), jamais la syntaxe exacte de la correction** : l'élève est
-  libre de corriger la `NetworkPolicy` existante par n'importe quel
-  moyen (édition, remplacement complet, etc.), du moment que le
-  comportement attendu est atteint.
+- **`verify.sh` teste uniquement le résultat fonctionnel**, jamais la
+  syntaxe exacte de la correction.
 
 ## Sources officielles utilisées
 
@@ -85,10 +65,10 @@ cursus).
 
 ## Limites connues
 
-- Testé uniquement "sur le papier" : pas d'accès direct à Killercoda.
-- **Rendu des balises `<details>/<summary>` non vérifié sur
-  Killercoda** — voir la section dédiée ci-dessus, c'est le point
-  numéro un à valider.
+- Testé uniquement "sur le papier" pour cette itération : le rendu des
+  boutons Tip/Solution est confirmé fonctionnel (retour direct), mais
+  le reste du scénario (namespaces renommés, bug du cas 2 simplifié)
+  n'a pas encore été retesté en conditions réelles.
 - `apk add --no-cache curl` au démarrage de chaque pod suppose un accès
-  sortant à internet au moment de leur création (avant toute
-  NetworkPolicy) — cohérent avec `netpol-isolation`, mêmes réserves.
+  sortant à internet au moment de leur création — cohérent avec
+  `netpol-isolation`, mêmes réserves.
