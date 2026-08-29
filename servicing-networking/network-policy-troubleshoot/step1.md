@@ -1,38 +1,38 @@
-# Cas 1 — matchLabels erroné entre les namespaces a et b
+# Cas 1 — han ne parvient pas à joindre chewie
 
 ## Contexte
 
-`han` (namespace `a`) doit pouvoir joindre `chewie` (namespace `b`) sur le port 80. Une `NetworkPolicy`, `allow-from-a`, existe déjà dans le namespace `b` et semble prévue exactement pour ça — mais la connexion échoue.
+`han` (namespace `dagobah`) doit pouvoir joindre `chewie` (namespace `endor`) sur le port 80. Une `NetworkPolicy`, `allow-from-dagobah`, existe déjà dans le namespace `endor` et semble prévue exactement pour ça — mais la connexion échoue.
 
 ## Constater le problème
 
 `k get pods -A -o wide`{{exec}}
 
-`k get networkpolicy -n b allow-from-a -o yaml`{{exec}}
+`k get networkpolicy -n endor allow-from-dagobah -o yaml`{{exec}}
 
-`CHEWIE_IP=$(kubectl get pod chewie -n b -o jsonpath='{.status.podIP}') && kubectl exec han -n a -- curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://$CHEWIE_IP"`{{exec}}
+`CHEWIE_IP=$(kubectl get pod chewie -n endor -o jsonpath='{.status.podIP}') && kubectl exec han -n dagobah -- curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://$CHEWIE_IP"`{{exec}}
 
 La commande `curl` ci-dessus échoue (timeout, pas de code HTTP).
 
 ## À toi de jouer
 
-Examine la `NetworkPolicy` `allow-from-a` dans le namespace `b`, compare-la à ce qui existe réellement sur le namespace `a`, et corrige ce qui doit l'être — **en modifiant la NetworkPolicy**, pas les namespaces.
+Examine la `NetworkPolicy` `allow-from-dagobah` dans le namespace `endor`, et corrige ce qui doit l'être — **en modifiant la NetworkPolicy**, pas les namespaces.
 
 <details>
 <summary>💡 Tip</summary>
 
-Regarde les labels réellement présents sur le namespace `a` :
+Regarde les labels réellement présents sur le namespace `dagobah` :
 
-`k get namespace a --show-labels`{{exec}}
+`k get namespace dagobah --show-labels`{{exec}}
 
-Compare avec ce que la `NetworkPolicy` attend dans son `namespaceSelector.matchLabels`. Une valeur ne correspond pas.
+Compare avec ce que la `NetworkPolicy` attend dans son `namespaceSelector.matchLabels`.
 
 </details>
 
 <details>
 <summary>✅ Solution</summary>
 
-Le namespace `a` porte le label `project: alpha` — mais la `NetworkPolicy` cherche `project: beta` dans son `namespaceSelector` :
+Le namespace `dagobah` porte le label `project: alpha` — mais la `NetworkPolicy` cherche `project: beta` dans son `namespaceSelector` :
 
 ```yaml
 ingress:
@@ -44,7 +44,7 @@ ingress:
 
 La correction consiste à remplacer `beta` par `alpha` :
 
-`kubectl edit networkpolicy allow-from-a -n b`{{exec}}
+`kubectl edit networkpolicy allow-from-dagobah -n endor`{{exec}}
 
 ```yaml
 ingress:
@@ -56,7 +56,7 @@ ingress:
 
 Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
 
-`CHEWIE_IP=$(kubectl get pod chewie -n b -o jsonpath='{.status.podIP}') && kubectl exec han -n a -- curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://$CHEWIE_IP"`{{exec}}
+`CHEWIE_IP=$(kubectl get pod chewie -n endor -o jsonpath='{.status.podIP}') && kubectl exec han -n dagobah -- curl -s -o /dev/null -w "%{http_code}\n" --max-time 5 "http://$CHEWIE_IP"`{{exec}}
 
 Tu dois maintenant obtenir `200`.
 

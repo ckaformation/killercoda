@@ -4,16 +4,19 @@
 #   - lien symbolique k -> kubectl
 #   - backend "kubernetes-kubeadm-1node" utilisé tel quel (CNI natif Cilium,
 #     supporte les NetworkPolicy — cf. netpol-isolation)
-#   - namespace "a" (label custom project=alpha), "b", "c", "d"
-#   - pods han(a), chewie(b), lando(c), wedge(d, squad=rebel), biggs(d,
-#     squad=rebel) — tous sous nginx:alpine avec curl installé au démarrage
-#   - NetworkPolicy CASSÉE dans "b" : namespaceSelector référence
+#   - namespaces "dagobah" (label custom project=alpha), "endor", "kamino",
+#     "mustafar"
+#   - pods han(dagobah), chewie(endor), lando(kamino), wedge(mustafar,
+#     squad=rebel), biggs(mustafar, squad=rebel) — tous sous nginx:alpine
+#     avec curl installé au démarrage
+#   - NetworkPolicy CASSÉE dans "endor" : namespaceSelector référence
 #     project=beta au lieu de project=alpha (valeur réellement présente sur
-#     le namespace "a") — objet de l'étape 1
-#   - NetworkPolicy CASSÉE dans "d" : combine namespaceSelector (ciblant c)
-#     et podSelector (squad=empire, valeur erronée) en ET dans le même
-#     élément de la liste "from", au lieu de deux éléments séparés en OU —
-#     objet de l'étape 2
+#     le namespace "dagobah") — objet du cas 1
+#   - NetworkPolicy CASSÉE dans "mustafar" : combine namespaceSelector
+#     (ciblant kamino) et podSelector (squad=rebel, valeur CORRECTE) en ET
+#     dans le même élément de la liste "from", au lieu de deux éléments
+#     séparés en OU. Seule la syntaxe est fautive ici, pas la valeur du
+#     label — objet du cas 2.
 # ============================================================================
 
 ln -sf "$(which kubectl)" /usr/local/bin/k
@@ -22,24 +25,24 @@ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: a
+  name: dagobah
   labels:
     project: alpha
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: b
+  name: endor
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: c
+  name: kamino
 ---
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: d
+  name: mustafar
 EOF
 
 cat <<EOF | kubectl apply -f -
@@ -47,7 +50,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: han
-  namespace: a
+  namespace: dagobah
   labels:
     app: han
 spec:
@@ -63,7 +66,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: chewie
-  namespace: b
+  namespace: endor
   labels:
     app: chewie
 spec:
@@ -79,7 +82,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: lando
-  namespace: c
+  namespace: kamino
   labels:
     app: lando
 spec:
@@ -95,7 +98,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: wedge
-  namespace: d
+  namespace: mustafar
   labels:
     app: wedge
     squad: rebel
@@ -112,7 +115,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: biggs
-  namespace: d
+  namespace: mustafar
   labels:
     app: biggs
     squad: rebel
@@ -130,8 +133,8 @@ cat <<EOF | kubectl apply -f -
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-from-a
-  namespace: b
+  name: allow-from-dagobah
+  namespace: endor
 spec:
   podSelector: {}
   policyTypes:
@@ -145,8 +148,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-c-and-d-internal
-  namespace: d
+  name: allow-kamino-and-mustafar-internal
+  namespace: mustafar
 spec:
   podSelector: {}
   policyTypes:
@@ -155,19 +158,19 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: c
+              kubernetes.io/metadata.name: kamino
           podSelector:
             matchLabels:
-              squad: empire
+              squad: rebel
       ports:
         - protocol: TCP
           port: 80
 EOF
 
-kubectl wait --for=condition=Ready pod/han -n a --timeout=120s
-kubectl wait --for=condition=Ready pod/chewie -n b --timeout=120s
-kubectl wait --for=condition=Ready pod/lando -n c --timeout=120s
-kubectl wait --for=condition=Ready pod/wedge -n d --timeout=120s
-kubectl wait --for=condition=Ready pod/biggs -n d --timeout=120s
+kubectl wait --for=condition=Ready pod/han -n dagobah --timeout=120s
+kubectl wait --for=condition=Ready pod/chewie -n endor --timeout=120s
+kubectl wait --for=condition=Ready pod/lando -n kamino --timeout=120s
+kubectl wait --for=condition=Ready pod/wedge -n mustafar --timeout=120s
+kubectl wait --for=condition=Ready pod/biggs -n mustafar --timeout=120s
 
 exit 0
