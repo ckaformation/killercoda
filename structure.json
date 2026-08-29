@@ -9,6 +9,11 @@
       "path": "workloads-scheduling",
       "title": "Workloads & Scheduling",
       "description": "Scénarios sur les objets de charge applicative (Pod, Deployment, StatefulSet, CronJob...) et leur ordonnancement."
+    },
+    {
+      "path": "servicing-networking",
+      "title": "Services & Networking",
+      "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
     }
   ]
 }
