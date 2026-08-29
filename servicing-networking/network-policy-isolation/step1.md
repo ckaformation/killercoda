@@ -1,7 +1,5 @@
 # Étape 1 — Deny by default dans les deux namespaces
 
-`/root/wait-for-prep.sh`{{exec}}
-
 ## 1. Tester la situation actuelle
 
 Rien n'empêche aujourd'hui `luke` de joindre `obi-wan`, dans le même namespace :
