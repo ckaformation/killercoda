@@ -1,0 +1,33 @@
+{
+  "title": "Gateway API & HTTPRoute — Canary avec Traefik",
+  "description": "Manipuler les objets Gateway et HTTPRoute de la Gateway API Kubernetes, et mettre en place un déploiement canary via pondération de trafic.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Environnement et création de la Gateway",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — HTTPRoute /api et /admin",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — HTTPRoute canary /web",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
