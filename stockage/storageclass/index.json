@@ -1,0 +1,33 @@
+{
+  "title": "StorageClass et politique de rétention (reclaimPolicy)",
+  "description": "Créer une StorageClass Retain, provisionner un volume dynamique avec local-path-provisioner, et observer la différence de comportement entre Delete et Retain à la suppression d'un PVC.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Créer une StorageClass Retain",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Provisionner et écrire des données",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — Supprimer le PVC et observer la rétention",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
