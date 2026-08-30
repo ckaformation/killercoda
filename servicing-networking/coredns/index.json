@@ -1,5 +1,5 @@
 {
-  "title": "Troubleshooting cluster & découverte de service",
+  "title": "CoreDNS",
   "description": "Diagnostiquer une panne dans le cluster, puis déployer une application et vérifier la découverte de service entre namespaces.",
   "details": {
     "intro": {
