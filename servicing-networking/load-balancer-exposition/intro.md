@@ -17,4 +17,6 @@ Bienvenue ! Sur un cluster cloud, un `Service` de type `LoadBalancer` provisionn
 
 > Note honnête sur l'étape 2 : le lien entre "exposer un service en LoadBalancer" et "ajouter un HPA" n'est pas un lien technique strict — un HPA fonctionne aussi bien derrière un `ClusterIP` ou un `NodePort`. C'est plutôt une bonne pratique complémentaire et réaliste : un service exposé vers l'extérieur est justement le genre de service pour lequel on veut absorber des pics de trafic élastiquement. On en profite ici pour pratiquer la mise en place d'un HPA, dans la continuité du chapitre Services & Networking.
 
+> La préparation de cet environnement (installation de MetalLB, de metrics-server, déploiement de l'application) prend un peu de temps. La première commande de l'étape 1 t'invite à patienter jusqu'à ce que tout soit prêt.
+
 C'est parti !

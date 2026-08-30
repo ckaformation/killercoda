@@ -24,7 +24,29 @@
 #   - namespace applicatif "holonet", avec le Deployment (2 réplicas,
 #     requests.cpu défini — requis pour qu'un HPA basé sur
 #     averageUtilization fonctionne) + Service NodePort dedans
+#   - la préparation complète (MetalLB + metrics-server + app) prend un
+#     temps non négligeable ; /root/wait-for-prep.sh est déposé dès le
+#     début pour que l'élève puisse attendre explicitement la fin de la
+#     préparation, plutôt que de devoir observer à la main le démarrage
+#     des pods pour savoir quand commencer (retour direct d'un test réel)
 # ============================================================================
+
+cat > /root/wait-for-prep.sh << 'WAITEOF'
+#!/bin/bash
+echo "Preparation de l'environnement en cours (MetalLB, metrics-server, application)..."
+TIMEOUT=300
+ELAPSED=0
+while [ ! -f /tmp/.scenario-prep-done ] && [ "$ELAPSED" -lt "$TIMEOUT" ]; do
+  sleep 3
+  ELAPSED=$((ELAPSED + 3))
+done
+if [ -f /tmp/.scenario-prep-done ]; then
+  echo "C'est pret ! Tu peux continuer."
+else
+  echo "La preparation prend plus de temps que prevu. Patiente encore un peu avant de continuer."
+fi
+WAITEOF
+chmod +x /root/wait-for-prep.sh
 
 ln -sf "$(which kubectl)" /usr/local/bin/k
 
@@ -122,5 +144,7 @@ spec:
 EOF
 
 kubectl wait --for=condition=Available deployment/holonet -n holonet --timeout=120s
+
+touch /tmp/.scenario-prep-done
 
 exit 0

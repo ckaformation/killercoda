@@ -1,5 +1,7 @@
 # Étape 1 — Passer le service de NodePort à LoadBalancer
 
+`/root/wait-for-prep.sh`{{exec}}
+
 ## 1. Observer l'état actuel
 
 `k get svc holonet -n holonet -o yaml`{{exec}}

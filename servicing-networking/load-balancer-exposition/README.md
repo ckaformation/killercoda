@@ -6,8 +6,8 @@
 metallb-loadbalancer-hpa/
 ├── index.json
 ├── intro.md
-├── intro-background.sh     # MetalLB (plage IP dynamique) + metrics-server + app dans son ns dédié
-├── step1.md / step1-verify.sh   # NodePort -> LoadBalancer "propre", validation curl
+├── intro-background.sh     # wait-for-prep.sh + MetalLB (plage IP dynamique) + metrics-server + app dans son ns dédié
+├── step1.md / step1-verify.sh   # attente prep + NodePort -> LoadBalancer "propre", validation curl
 ├── step2.md / step2-verify.sh   # HorizontalPodAutoscaler
 └── finish.md
 ```
@@ -96,6 +96,19 @@ ici pour éviter de reproduire les mêmes fausses pistes :
 - **Réplique de base à 2** (comme demandé) : voir la remarque de
   transparence dans `intro.md` sur le lien plutôt indirect entre
   LoadBalancer et HPA.
+
+- **`/root/wait-for-prep.sh`** (mécanisme déjà utilisé dans
+  `2nodes-cluster-creation`, `kubeadm-cluster-upgrade` et
+  `netpol-isolation`), ajouté suite à un retour direct après le test
+  réussi : la préparation complète (MetalLB, metrics-server,
+  application) prend un temps non négligeable, et l'élève n'avait
+  auparavant aucun moyen de savoir quand elle était terminée sans
+  observer les pods à la main. Le script est déposé tout en tout début
+  du script `background` (quasi instantané), et le fichier témoin
+  (`/tmp/.scenario-prep-done`) n'est créé qu'à la toute fin, après la
+  dernière vérification (`Deployment holonet` disponible). La première
+  commande de l'étape 1 invite l'élève à attendre ce signal avant de
+  continuer.
 
 ## Sources officielles utilisées
 
