@@ -1,0 +1,28 @@
+{
+  "title": "MetalLB : exposer un service en LoadBalancer, puis l'autoscaler",
+  "description": "MetalLB déjà installé et configuré sur un cluster mono-nœud. Bascule un service NodePort en LoadBalancer et valide l'accès, puis ajoute un HorizontalPodAutoscaler.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Passer le service de NodePort à LoadBalancer",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Ajouter un HorizontalPodAutoscaler",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
