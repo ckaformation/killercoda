@@ -29,5 +29,10 @@
   },
   "backend": {
     "imageid": "kubernetes-kubeadm-1node"
+  },
+  "assets": {
+    "host01": [
+      { "file": "wait-for-prep.sh", "target": "/root/", "chmod": "+x" }
+    ]
   }
 }
