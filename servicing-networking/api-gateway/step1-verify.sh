@@ -23,12 +23,12 @@ echo "✅ gatewayClassName correct (traefik)"
 
 LISTENER_MATCH=$(kubectl get gateway "$GW_NAME" -n "$APP_NS" \
   -o jsonpath='{range .spec.listeners[?(@.protocol=="HTTP")]}{.hostname}{" "}{.port}{"\n"}{end}' \
-  | grep -c '^imagine\.app 80$')
+  | grep -c '^imagine\.app 8000$')
 if [ "$LISTENER_MATCH" -lt 1 ]; then
-  echo "❌ Aucun listener HTTP port 80 avec hostname imagine.app"
+  echo "❌ Aucun listener HTTP port 8000 avec hostname imagine.app"
   exit 1
 fi
-echo "✅ Listener HTTP/80/imagine.app présent"
+echo "✅ Listener HTTP/8000/imagine.app présent"
 
 # Négatif : la Gateway ne doit pas exposer un listener sans hostname
 # (ce qui accepterait n'importe quel hostname, trop permissif pour l'exercice)
