@@ -11,6 +11,11 @@
       "description": "Scénarios sur les objets de charge applicative (Pod, Deployment, StatefulSet, CronJob...) et leur ordonnancement."
     },
     {
+      "path": "stockage",
+      "title": "Stockage k8s",
+      "description": "Scénarios sur les objets de stockage (pv, pvc, storageclass,...)."
+    },
+    {
       "path": "servicing-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
