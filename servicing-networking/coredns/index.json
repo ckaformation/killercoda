@@ -1,0 +1,28 @@
+{
+  "title": "Troubleshooting cluster & découverte de service",
+  "description": "Diagnostiquer une panne dans le cluster, puis déployer une application et vérifier la découverte de service entre namespaces.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Quelque chose ne tourne pas rond",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Déploiement et découverte de service",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
