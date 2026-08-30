@@ -16,6 +16,14 @@ Dans un **nouveau namespace** de ton choix (par exemple `rebel-base`) :
 kubectl create namespace rebel-base
 ```{{exec}}
 
+```
+kubectl create deployment comms-relay --image=nginx:1-alpine -n rebel-base
+```{{exec}}
+
+```
+kubectl expose deployment comms-relay --port=80 --target-port=80 --type=ClusterIP -n rebel-base
+```{{exec}}
+
 ## 2. Connecte l'application déjà en place
 
 Un autre namespace, `death-star`, contient déjà un déploiement
