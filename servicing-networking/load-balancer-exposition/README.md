@@ -71,6 +71,36 @@ metallb-loadbalancer-hpa/
   que d'inventer une justification technique qui n'existe pas
   réellement.
 
+- **`kubectl wait --for=condition=Established` sur les deux CRD, avant
+  toute création d'instance** (correctif appliqué après un second test
+  réel, qui a permis de confirmer la cause précise). Le premier
+  correctif (redémarrage du controller/speaker, conservé ci-dessous)
+  partait de l'hypothèse d'un souci de cache côté controller. Le test a
+  montré autre chose, plus en amont : aucune instance
+  `IPAddressPool`/`L2Advertisement` n'existait du tout après le script
+  `background` — signe que le `kubectl apply` de ces objets avait
+  échoué silencieusement (le script n'avait pas de vérification
+  d'erreur à cet endroit), très probablement avec une erreur du type
+  `no matches for kind IPAddressPool`, parce que les CRD correspondantes
+  n'étaient pas encore pleinement enregistrées côté API server au
+  moment de l'apply — le `kubectl wait` sur les *pods* MetalLB ne
+  garantit pas ça. Une vérification défensive a aussi été ajoutée juste
+  après la création (`kubectl get ipaddresspool`/`l2advertisement`),
+  qui affiche un message d'erreur explicite dans les logs si jamais ça
+  échouait de nouveau, pour ne plus jamais reproduire un diagnostic à
+  l'aveugle comme celui-ci.
+
+- **Redémarrage forcé du `controller` et du `speaker` MetalLB, juste
+  après la création de l'`IPAddressPool`/`L2Advertisement`** (premier
+  correctif, conservé par précaution même si l'attente sur
+  "Established" ci-dessus semble être la vraie cause) : partait de
+  l'hypothèse que le controller pouvait manquer l'événement `WATCH` de
+  la pool si son cache interne n'avait pas fini de se synchroniser au
+  moment de sa création. Sans effet mesurable constaté lors du second
+  test (puisque la pool n'existait de toute façon pas encore à ce
+  moment-là) — laissé en place en filet de sécurité supplémentaire,
+  sans certitude qu'il soit nécessaire.
+
 ## Sources officielles utilisées
 
 - https://metallb.universe.tf/installation/
@@ -81,14 +111,15 @@ metallb-loadbalancer-hpa/
 ## Limites connues
 
 - Testé uniquement "sur le papier" : pas d'accès direct à Killercoda.
-- **Le fonctionnement réel de MetalLB en mode L2 dans l'environnement
-  virtualisé de Killercoda n'a pas pu être vérifié indépendamment** —
-  je m'appuie sur l'exemple de plage IP que tu as toi-même fourni
-  (cohérent avec le sous-réseau `172.30.1.x` déjà rencontré dans
-  d'autres scénarios multi-nœuds de ce cursus), qui suggère que tu as
-  déjà de bonnes raisons de penser que ça fonctionne dans cet
-  environnement. C'est le point à surveiller en priorité au premier
-  test réel.
+- **MetalLB a révélé un vrai problème lors de deux tests successifs en
+  conditions réelles** : le premier correctif (redémarrage
+  controller/speaker) n'a pas suffi ; le second diagnostic (aucune
+  instance `IPAddressPool`/`L2Advertisement` créée du tout) a permis
+  d'identifier une cause plus fondamentale (CRD pas encore
+  `Established` au moment de l'apply), maintenant corrigée via
+  `kubectl wait --for=condition=Established`. **Pas encore re-testé en
+  conditions réelles après ce second correctif** — c'est le point à
+  vérifier en priorité au prochain test.
 - Le calcul dynamique de la plage suppose que l'IP interne du nœud
   reste dans un sous-réseau `/24` cohérent avec un usage MetalLB en L2
   — non vérifié spécifiquement sur ce backend.
