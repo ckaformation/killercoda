@@ -31,7 +31,7 @@
     "imageid": "kubernetes-kubeadm-1node"
   },
   "assets": {
-    "host01": [
+    "controlplane": [
       { "file": "wait-for-prep.sh", "target": "/root/", "chmod": "+x" }
     ]
   }
