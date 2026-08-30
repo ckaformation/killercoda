@@ -50,6 +50,15 @@ kubectl set env deployment/sensor-array -n death-star \
   -c probe-droid TARGET_URL=comms-relay.rebel-base
 ```{{exec}}
 
+`kubectl set env` déclenche en principe un nouveau rollout tout seul,
+mais le nouveau pod peut mettre du temps à être pris en compte. Force
+le rollout pour obtenir un résultat immédiat :
+
+```
+kubectl -n death-star rollout restart deployment/sensor-array
+kubectl -n death-star rollout status deployment/sensor-array
+```{{exec}}
+
 ## 3. Vérifie
 
 `kubectl set env` déclenche un nouveau rollout du déploiement

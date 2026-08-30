@@ -83,6 +83,13 @@ coredns-troubleshoot/
   namespaces hors système et hors `death-star`, dans le même esprit
   que les scénarios précédents.
 
+- **`kubectl -n death-star rollout restart deployment/sensor-array`
+  après le `kubectl set env`** : ajouté suite à un test réel sur
+  Killercoda (Pierrot) — `kubectl set env` déclenche en théorie un
+  rollout automatiquement, mais le nouveau pod met du temps à être
+  pris en compte dans la pratique. Le rollout restart explicite donne
+  un résultat immédiat dans les logs.
+
 ## Sources utilisées
 
 - Comportement de CoreDNS (échec de parsing du `Corefile` = process
