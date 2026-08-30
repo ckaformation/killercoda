@@ -79,6 +79,16 @@ usage basique.
 
 ## Limites connues / hypothèses non vérifiées en conditions réelles
 
+- **Le port d'un listener `Gateway` doit matcher un entryPoint Traefik
+  existant** (confirmé sur `github.com/traefik/traefik`, doc
+  `gateway-api.md` : *"Gateway listener ports must match the
+  configured EntryPoint ports of the Traefik deployment"*). L'entryPoint
+  `web` du chart écoute par défaut sur le port conteneur `8000`, pas
+  `80` (`80` n'est que le port du Service Kubernetes). Le listener de
+  `step1.md` utilise donc `port: 8000`, pas `80` — sinon la Gateway
+  reste `Accepted` (au niveau GatewayClass/contrôleur) mais le listener
+  lui-même est rejeté (`No Listener is valid` / `ListenersNotValid`).
+  Corrigé après un premier test réel sur Killercoda par Pierrot.
 - **`gatewayClass.enabled` indépendant de `gateway.enabled`** dans le
   chart Traefik : la documentation générée (VALUES.md) contient une
   formulation ambiguë sur ce couplage. `intro-background.sh` inclut un

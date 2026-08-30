@@ -11,7 +11,16 @@
 Dans le namespace `imagine-app`, crée une ressource `Gateway` :
 
 - rattachée à la `GatewayClass` **`traefik`**
-- avec un listener HTTP, port `80`, hostname `imagine.app`
+- avec un listener HTTP, port **`8000`**, hostname `imagine.app`
+
+> ⚠️ Chez Traefik, le port d'un listener `Gateway` doit correspondre
+> exactement au port de l'entryPoint Traefik déjà configuré (ici
+> l'entryPoint `web`, qui écoute par défaut sur le port conteneur
+> `8000` — le port `80` n'existe qu'au niveau du Service Kubernetes,
+> pas du process Traefik). Un port qui ne correspond à aucun entryPoint
+> rend le listener invalide (`No Listener is valid` / `ListenersNotValid`).
+> Ça ne change rien côté élève : on continue d'accéder au service via
+> `imagine.app:30080`, seul le port déclaré dans le listener change.
 
 Exemple :
 
@@ -26,7 +35,7 @@ spec:
   listeners:
   - name: http
     protocol: HTTP
-    port: 80
+    port: 8000
     hostname: imagine.app
     allowedRoutes:
       namespaces:
