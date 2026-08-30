@@ -7,7 +7,7 @@ Bienvenue ! Sur un cluster cloud, un `Service` de type `LoadBalancer` provisionn
 - Un cluster Kubernetes mono-nœud.
 - **MetalLB**, installé et configuré en mode L2 (annonces ARP), avec une plage d'adresses dérivée dynamiquement du sous-réseau réel du nœud (par exemple `172.30.1.100-172.30.1.110` si le nœud est en `172.30.1.x` — la plage exacte dépend de l'environnement).
 - **metrics-server**, nécessaire pour que le `HorizontalPodAutoscaler` de l'étape 2 dispose de vraies métriques CPU, plutôt que d'afficher indéfiniment `<unknown>`.
-- Une application, `holonet` : un `Deployment` (2 réplicas, avec une demande CPU définie sur chaque pod) exposé par un `Service` de type **NodePort**.
+- Une application, `holonet`, dans son propre namespace applicatif (également nommé `holonet`) : un `Deployment` (2 réplicas, avec une demande CPU définie sur chaque pod) exposé par un `Service` de type **NodePort**.
 - Un raccourci `k` (identique à `kubectl`).
 
 ## Ce que tu vas faire

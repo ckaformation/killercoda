@@ -2,15 +2,15 @@
 
 ## 1. Créer le HPA
 
-`kubectl autoscale deployment holonet --min=2 --max=4 --cpu-percent=50`{{exec}}
+`kubectl autoscale deployment holonet -n holonet --min=2 --max=4 --cpu-percent=50`{{exec}}
 
 ## 2. Vérifier
 
-`k get hpa holonet`{{exec}}
+`k get hpa holonet -n holonet`{{exec}}
 
 La colonne `TARGETS` doit afficher un pourcentage réel (par exemple `1%/50%`), pas `<unknown>/50%` — c'est `metrics-server`, déjà en place, qui rend ça possible.
 
-`k describe hpa holonet`{{exec}}
+`k describe hpa holonet -n holonet`{{exec}}
 
 ## 3. Comprendre ce qui a été mis en place
 
