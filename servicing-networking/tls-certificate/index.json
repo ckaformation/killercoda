@@ -1,0 +1,28 @@
+{
+  "title": "Sécuriser une application avec un certificat TLS",
+  "description": "Générer un certificat via openssl, créer un Secret TLS, et restreindre les versions TLS acceptées par le serveur nginx.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Générer le certificat et créer le Secret TLS",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Restreindre les versions TLS acceptées",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
