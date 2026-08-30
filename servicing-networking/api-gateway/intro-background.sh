@@ -11,6 +11,28 @@ APP_NS="imagine-app"
 
 rm -f "$SENTINEL"
 
+# wait-for-prep.sh n'est pas livré via un mécanisme "assets" (syntaxe non
+# confirmée pour ce backend) : ce script, dont l'exécution automatique au
+# démarrage de la VM est déjà acquise, l'écrit lui-même sur disque.
+cat > /root/wait-for-prep.sh <<'EOS'
+#!/bin/bash
+SENTINEL="/root/.prep-done"
+
+echo "Préparation de l'environnement en cours (CRDs Gateway API, Traefik, application de démo)..."
+for i in $(seq 1 60); do
+  if [ -f "$SENTINEL" ]; then
+    echo "Environnement prêt."
+    exit 0
+  fi
+  sleep 5
+done
+
+echo "L'environnement met plus de temps que prévu à se préparer."
+echo "Relance ce script dans quelques instants : ./wait-for-prep.sh"
+exit 1
+EOS
+chmod +x /root/wait-for-prep.sh
+
 echo "[prep] Installation des CRDs Gateway API (canal standard, ${GATEWAY_API_VERSION})"
 kubectl apply -f "https://github.com/kubernetes-sigs/gateway-api/releases/download/${GATEWAY_API_VERSION}/standard-install.yaml"
 
