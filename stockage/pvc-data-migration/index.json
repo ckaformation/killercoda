@@ -1,0 +1,33 @@
+{
+  "title": "Migrer les données d'un PVC vers une autre StorageClass",
+  "description": "Créer un nouveau PVC sur une StorageClass Retain, copier les données via un Job, puis basculer le déploiement et nettoyer l'ancien volume.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Créer le nouveau PVC",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Copier les données",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — Basculer et nettoyer",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
