@@ -1,8 +1,21 @@
 # Étape 1 — Panne de l'apiserver : le tour des outils
 
-Le manifest du pod statique `kube-apiserver` a déjà été sauvegardé, et
-un faux argument y a été injecté : le conteneur `kube-apiserver` ne
-démarre plus.
+## 1. Sauvegarde le manifest
+
+```
+cp /etc/kubernetes/manifests/kube-apiserver.yaml /root/kube-apiserver-backup.yaml
+```{{exec}}
+
+## 2. Injecte un faux argument
+
+```
+sed -i '/^\s*- kube-apiserver$/a\    - --use-the-force=true' /etc/kubernetes/manifests/kube-apiserver.yaml
+```{{exec}}
+
+Laisse quelques secondes à kubelet pour détecter le changement et
+tenter de redémarrer le conteneur : le temps de lire la suite.
+
+## 3. Fais le tour des outils
 
 Fais le tour des sources d'information suivantes pour observer ce que
 cette panne génère :
@@ -12,7 +25,7 @@ cette panne génère :
 - `crictl ps` / `crictl ps -a` / `crictl logs`
 - `journalctl -u kubelet`
 
-## /var/log/pods
+### /var/log/pods
 
 ```
 ls /var/log/pods
@@ -21,7 +34,7 @@ ls /var/log/pods
 Repère le dossier correspondant au pod `kube-apiserver`, puis regarde
 son contenu et ses logs.
 
-## /var/log/containers
+### /var/log/containers
 
 ```
 ls /var/log/containers
@@ -30,7 +43,7 @@ ls /var/log/containers
 Ce sont des liens symboliques vers les mêmes fichiers que ci-dessus,
 mais nommés différemment (`<pod>_<namespace>_<conteneur>-<id>.log`).
 
-## crictl
+### crictl
 
 `crictl ps` ne montre que les conteneurs en cours d'exécution. Pour
 voir aussi ceux qui ont crashé :
@@ -47,7 +60,7 @@ valeur trouvée) :
 crictl logs <id-du-conteneur>
 ```
 
-## journalctl
+### journalctl
 
 ```
 journalctl -u kubelet --no-pager | tail -100
@@ -56,7 +69,7 @@ journalctl -u kubelet --no-pager | tail -100
 Prends le temps de comparer ce que chaque source montre — elles ne
 disent pas exactement la même chose.
 
-## Restaurer le manifest
+## 4. Restaure le manifest
 
 Une fois le tour terminé, restaure le manifest d'origine :
 
