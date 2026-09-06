@@ -23,10 +23,17 @@ statefulset-node-affinity-troubleshoot/
 - **Namespace `kamino`, StatefulSet `clone-vat`** : thème Star Wars
   cohérent avec le reste du cursus (Kamino = planète de clonage des
   troopers, un StatefulSet qui "clone" des instances stables).
-- **`local-path-provisioner` réinstallé dans ce scénario** (même
-  manifeste `v0.0.37` que `storage-reclaim-policy`) : chaque scénario
-  Killercoda est un environnement isolé, donc pas de dépendance
-  possible à un scénario précédent.
+- **`local-path-provisioner` déjà installé par défaut sur l'image
+  `kubernetes-kubeadm-2nodes`** (corrigé suite à retour de Pierrot) :
+  `intro-background.sh` ne l'installe donc plus lui-même, contrairement
+  à `storage-reclaim-policy` (qui tourne sur le backend 1 nœud, où il
+  n'est pas préinstallé). Le script se contente de vérifier que la
+  `StorageClass local-path` est bien présente (avec une courte boucle
+  d'attente, au cas où elle mettrait quelques secondes à apparaître au
+  démarrage de la VM), sans réinstaller quoi que ce soit. L'annotation
+  `is-default-class` n'est plus gérée non plus : elle n'a pas d'utilité
+  ici puisque le StatefulSet référence `storageClassName: local-path`
+  explicitement, sans dépendre d'une StorageClass par défaut.
 - **`node-role.kubernetes.io/control-plane:NoSchedule`** comme clé de
   taint attendue : c'est la clé standard depuis Kubernetes 1.20+
   (remplace l'ancienne `node-role.kubernetes.io/master`), cohérente
