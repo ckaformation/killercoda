@@ -1,0 +1,28 @@
+{
+  "title": "Troubleshooting PVC & déploiement PostgreSQL",
+  "description": "Débloquer un PersistentVolumeClaim en Pending, puis déployer PostgreSQL avec stockage persistant à partir d'un template à compléter.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Un volume bloqué",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Déployer PostgreSQL avec stockage persistant",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
