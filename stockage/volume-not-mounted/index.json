@@ -1,0 +1,28 @@
+{
+  "title": "Troubleshooting StatefulSet, drain de nœud & affinité de volume",
+  "description": "Préparer un nœud pour une maintenance, puis diagnostiquer pourquoi un pod de StatefulSet reste bloqué à cause de l'affinité de nœud d'un volume local-path.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Maintenance de node01",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Toujours en Pending",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
