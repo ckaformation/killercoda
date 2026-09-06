@@ -1,29 +1,7 @@
 #!/bin/bash
 set -e
 
-SENTINEL="/root/.prep-done"
 NS="kamino"
-
-rm -f "$SENTINEL"
-
-cat > /root/wait-for-prep.sh <<'EOS'
-#!/bin/bash
-SENTINEL="/root/.prep-done"
-
-echo "Préparation de l'environnement en cours..."
-for i in $(seq 1 60); do
-  if [ -f "$SENTINEL" ]; then
-    echo "Environnement prêt."
-    exit 0
-  fi
-  sleep 5
-done
-
-echo "L'environnement met plus de temps que prévu à se préparer."
-echo "Relance ce script dans quelques instants : ./wait-for-prep.sh"
-exit 1
-EOS
-chmod +x /root/wait-for-prep.sh
 
 echo "[prep] Création du namespace $NS"
 kubectl create namespace "$NS" --dry-run=client -o yaml | kubectl apply -f -
@@ -89,5 +67,4 @@ EOF
 echo "[prep] Attente que le pod clone-vat-0 soit Running (sur node01)"
 kubectl -n "$NS" wait --for=condition=Ready pod/clone-vat-0 --timeout=120s
 
-touch "$SENTINEL"
 echo "[prep] Environnement prêt (clone-vat-0 tourne sur node01)."

@@ -1,12 +1,6 @@
 # Étape 1 — Maintenance de node01
 
-## 1. Vérifier que l'environnement est prêt
-
-```
-./wait-for-prep.sh
-```{{exec}}
-
-## 2. Préparer node01 pour une maintenance
+## 1. Préparer node01 pour une maintenance
 
 Le pod du StatefulSet `clone-vat` tourne actuellement sur `node01`.
 Une opération de maintenance est prévue sur ce nœud : mets-le hors
@@ -17,7 +11,7 @@ kubectl cordon node01
 kubectl drain node01 --ignore-daemonsets --delete-emptydir-data
 ```{{exec}}
 
-## 3. Observe la conséquence
+## 2. Observe la conséquence
 
 ```
 kubectl get pods -n kamino -o wide
