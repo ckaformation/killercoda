@@ -3,7 +3,6 @@ set -e
 
 SENTINEL="/root/.prep-done"
 NS="kamino"
-PROVISIONER_VERSION="v0.0.37"
 
 rm -f "$SENTINEL"
 
@@ -29,14 +28,17 @@ chmod +x /root/wait-for-prep.sh
 echo "[prep] Création du namespace $NS"
 kubectl create namespace "$NS" --dry-run=client -o yaml | kubectl apply -f -
 
-echo "[prep] Installation de rancher/local-path-provisioner (${PROVISIONER_VERSION})"
-kubectl apply -f "https://raw.githubusercontent.com/rancher/local-path-provisioner/${PROVISIONER_VERSION}/deploy/local-path-storage.yaml"
-
-echo "[prep] Attente du rollout du provisioner"
-kubectl -n local-path-storage rollout status deployment/local-path-provisioner --timeout=120s
-
-echo "[prep] Marquage de la StorageClass local-path comme StorageClass par défaut"
-kubectl patch storageclass local-path -p '{"metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+echo "[prep] Vérification que la StorageClass local-path est disponible (déjà installée par défaut sur cette image)"
+for i in $(seq 1 24); do
+  if kubectl get storageclass local-path >/dev/null 2>&1; then
+    break
+  fi
+  sleep 5
+done
+if ! kubectl get storageclass local-path >/dev/null 2>&1; then
+  echo "[prep] ⚠️  StorageClass local-path introuvable après attente — vérifier si local-path-provisioner est bien préinstallé sur cette image"
+  exit 1
+fi
 
 echo "[prep] Création du StatefulSet clone-vat (namespace $NS)"
 kubectl apply -n "$NS" -f - <<'EOF'
