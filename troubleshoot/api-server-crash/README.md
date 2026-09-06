@@ -23,8 +23,8 @@ apiserver-troubleshoot/
 - **`crictl` installé en arrière-plan** (absent par défaut sur ce
   backend, contrairement à ce que je supposais initialement) :
   installation par tarball depuis les releases GitHub officielles de
-  `kubernetes-sigs/cri-tools` (`v1.37.0`, dernière version confirmée
-  au moment de la rédaction), avec un `/etc/crictl.yaml` explicite
+  `kubernetes-sigs/cri-tools` (`v1.36.0`, version demandée par
+  Pierrot), avec un `/etc/crictl.yaml` explicite
   pointant vers le socket containerd — évite de dépendre d'une
   auto-détection d'endpoint, dépréciée dans les versions récentes de
   crictl.
