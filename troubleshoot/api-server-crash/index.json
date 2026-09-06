@@ -1,0 +1,30 @@
+{
+  "title": "Troubleshooting kube-apiserver",
+  "description": "Diagnostiquer plusieurs pannes de kube-apiserver en utilisant crictl, /var/log et journalctl, sans dépendre de kubectl.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Panne de l'apiserver : le tour des outils",
+        "text": "step1.md"
+      },
+      {
+        "title": "Étape 2 — --etcd-servers erroné (crictl uniquement)",
+        "text": "step2.md"
+      },
+      {
+        "title": "Étape 3 — apiVersion corrompue",
+        "text": "step3.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
