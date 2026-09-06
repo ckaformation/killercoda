@@ -16,6 +16,11 @@
       "description": "Scénarios sur les objets de stockage (pv, pvc, storageclass,...)."
     },
     {
+      "path": "troubleshoot",
+      "title": "Troubleshooting",
+      "description": "Scénarios de troubleshoot k8s."
+    },
+    {
       "path": "servicing-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
