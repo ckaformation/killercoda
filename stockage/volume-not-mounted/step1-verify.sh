@@ -1,11 +1,6 @@
 #!/bin/bash
 NS="kamino"
 
-if [ ! -f /root/.prep-done ]; then
-  echo "❌ L'environnement n'est pas encore prêt"
-  exit 1
-fi
-
 UNSCHEDULABLE=$(kubectl get node node01 -o jsonpath='{.spec.unschedulable}' 2>/dev/null)
 if [ "$UNSCHEDULABLE" != "true" ]; then
   echo "❌ node01 n'est pas cordon (unschedulable != true)"

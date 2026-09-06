@@ -14,6 +14,16 @@ statefulset-node-affinity-troubleshoot/
 
 ## Choix effectués et pourquoi
 
+- **Pattern sentinel/`wait-for-prep.sh` retiré de ce scénario**
+  (suite à retour de Pierrot : la synchronisation traînait en
+  longueur malgré un environnement réellement prêt à la vérification
+  manuelle — cause exacte non identifiée). `intro-background.sh`
+  continue de préparer l'environnement en arrière-plan comme le prévoit
+  Killercoda, mais sans étape de confirmation explicite côté élève :
+  l'élève commence directement l'étape 1, en s'appuyant sur le temps
+  de lecture de l'intro pour laisser le script d'arrière-plan
+  terminer. `step1-verify.sh` ne vérifie donc plus de sentinel.
+
 - **Backend `kubernetes-kubeadm-2nodes`** : nécessaire pour avoir deux
   nœuds distincts (`controlplane` + `node01`). Chaîne d'`imageid` non
   confirmée directement (contrairement à `kubernetes-kubeadm-1node`,
@@ -86,6 +96,14 @@ statefulset-node-affinity-troubleshoot/
 
 ## Limites connues / hypothèses non vérifiées en conditions réelles
 
+- **Sans étape de synchronisation explicite, l'élève pourrait démarrer
+  l'étape 1 avant que `clone-vat-0` soit réellement `Running`** sur
+  `node01` (pull de l'image `busybox:1.36`, création du PVC/PV...) si
+  la lecture de `intro.md` est très rapide. Risque jugé faible et
+  accepté suite à la demande de Pierrot, mais à surveiller si des
+  échecs de `step1-verify.sh` apparaissent alors que l'élève a bien
+  suivi les instructions — dans ce cas, relancer la vérification après
+  quelques secondes suffit.
 - **Testé uniquement "sur le papier"**, comme les scénarios
   précédents.
 - **`imageid` du backend 2 nœuds** : à confirmer/corriger (voir plus
