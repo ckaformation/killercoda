@@ -1,16 +1,21 @@
 #!/bin/bash
 set -e
 
-MANIFEST="/etc/kubernetes/manifests/kube-apiserver.yaml"
-BACKUP="/root/kube-apiserver-backup.yaml"
+CRICTL_VERSION="v1.37.0"
 
-echo "[prep] Sauvegarde du manifest kube-apiserver"
-cp "$MANIFEST" "$BACKUP"
+echo "[prep] Installation de crictl (${CRICTL_VERSION})"
+curl -L "https://github.com/kubernetes-sigs/cri-tools/releases/download/${CRICTL_VERSION}/crictl-${CRICTL_VERSION}-linux-amd64.tar.gz" --output /tmp/crictl.tar.gz
+tar zxvf /tmp/crictl.tar.gz -C /usr/local/bin
+rm -f /tmp/crictl.tar.gz
 
-echo "[prep] Injection d'un faux argument (--use-the-force=true)"
-sed -i '/^\s*- kube-apiserver$/a\    - --use-the-force=true' "$MANIFEST"
+echo "[prep] Configuration de crictl (endpoint containerd)"
+cat > /etc/crictl.yaml <<'EOF'
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 10
+EOF
 
-echo "[prep] Attente que kubelet détecte le changement et que le conteneur échoue"
-sleep 20
+echo "[prep] Vérification de crictl"
+crictl --version
 
-echo "[prep] Environnement prêt (kube-apiserver cassé volontairement, backup dans $BACKUP)."
+echo "[prep] Environnement prêt (base saine, aucune panne introduite)."

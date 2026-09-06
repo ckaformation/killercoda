@@ -10,8 +10,9 @@ plusieurs reprises pour provoquer différents types de panne. À chaque
 fois, tu chercheras la cause à l'aide d'outils qui ne dépendent pas de
 l'apiserver : `crictl`, les logs sous `/var/log`, et `journalctl`.
 
-Le manifest d'origine a déjà été sauvegardé, et une première panne a
-été introduite pendant que tu lisais ces lignes.
+Le cluster démarre sur une base saine, sans erreur : c'est toi qui vas
+introduire chaque panne, la diagnostiquer, puis restaurer le manifest
+d'origine.
 
 Pas de vérification automatique sur ce scénario : on avance ensemble,
 étape par étape.

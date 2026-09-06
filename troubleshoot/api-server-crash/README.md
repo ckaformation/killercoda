@@ -13,6 +13,22 @@ apiserver-troubleshoot/
 └── finish.md
 ```
 
+## Corrections suite à retour de Pierrot
+
+- **Base de départ saine** : `intro-background.sh` ne casse plus rien
+  automatiquement. Il se contente d'installer `crictl` (absent par
+  défaut sur ce backend). La sauvegarde du manifest et l'injection du
+  premier faux argument sont maintenant des actions explicites de
+  l'élève, au tout début de l'étape 1.
+- **`crictl` installé en arrière-plan** (absent par défaut sur ce
+  backend, contrairement à ce que je supposais initialement) :
+  installation par tarball depuis les releases GitHub officielles de
+  `kubernetes-sigs/cri-tools` (`v1.37.0`, dernière version confirmée
+  au moment de la rédaction), avec un `/etc/crictl.yaml` explicite
+  pointant vers le socket containerd — évite de dépendre d'une
+  auto-détection d'endpoint, dépréciée dans les versions récentes de
+  crictl.
+
 ## Corrections de typos (silencieuses, vrais chemins Kubernetes)
 
 - `/var/logs/pods` → `/var/log/pods`
@@ -53,12 +69,12 @@ apiserver-troubleshoot/
   3 étapes : ce bloc contient un placeholder à remplacer par l'élève ;
   le marquer `{{exec}}` enverrait le texte littéral (avec les
   chevrons) au terminal.
-- **`sleep 20`** dans `intro-background.sh` après l'injection du
-  premier faux argument, plutôt qu'une boucle d'attente active : sans
-  apiserver fonctionnel, un `kubectl wait` classique est impossible ;
-  20 secondes est une marge large par rapport à l'intervalle habituel
-  de détection des pods statiques par kubelet, mais non chronométré
-  précisément sur ce backend.
+- **Socket containerd supposé** : `unix:///run/containerd/containerd.sock`
+  dans `/etc/crictl.yaml` — chemin standard pour un kubeadm avec
+  containerd, mais non re-vérifié spécifiquement sur ce backend
+  Killercoda. Si `crictl ps` échoue avec une erreur de connexion, ce
+  chemin de socket est le premier point à vérifier
+  (`ls /run/containerd/` ou `ls /var/run/containerd/`).
 
 ## Sources utilisées
 
