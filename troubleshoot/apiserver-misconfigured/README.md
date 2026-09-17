@@ -12,6 +12,22 @@ apiserver-troubleshoot-3errors/
 └── finish.md
 ```
 
+## Corrections suite à retour de Pierrot
+
+- **Description allégée** (`step1.md`, `intro.md`) : la version
+  initiale expliquait trop explicitement la logique en cascade des 3
+  erreurs avant même que l'élève ne commence — ça déflorait une partie
+  de la découverte. Le texte visible est désormais minimal ("le
+  manifest est mal configuré en 3 points, répare-les"), la mécanique
+  en cascade n'étant expliquée que dans le dropdown Solution.
+- **`vim` plutôt que `sed`** pour les 3 corrections dans le dropdown
+  Solution : chaque fix ouvre `vim` sur le manifest, avec l'édition à
+  faire décrite en prose, plutôt qu'une commande `sed` automatique en
+  une ligne — plus proche d'une pratique réaliste de troubleshooting.
+  `intro-background.sh` garde `sed`, puisque c'est un script
+  d'automatisation (l'injection des erreurs), pas une instruction
+  suivie par l'élève.
+
 ## Choix effectués et pourquoi
 
 - **Une seule étape** (contrairement au scénario précédent à 3
