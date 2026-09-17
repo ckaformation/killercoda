@@ -1,9 +1,8 @@
 # Étape 1 — Trois erreurs, une méthode
 
-`kube-apiserver` ne démarre pas. Utilise la méthodologie vue
-précédemment (`crictl`, `/var/log`, `journalctl -u kubelet`) pour
-identifier et corriger les **3 erreurs** présentes dans
-`/etc/kubernetes/manifests/kube-apiserver.yaml`.
+L'apiserver ne démarre pas. Le manifest est volontairement mal
+configuré en 3 points. Répare les 3 erreurs pour permettre à
+kube-apiserver de démarrer.
 
 ```
 crictl ps -a
@@ -49,8 +48,11 @@ le fichier comme un pod valide — `journalctl -u kubelet` doit montrer
 une erreur de parsing YAML explicite, et non un problème de conteneur.
 
 ```
-sed -i 's/^metadata;$/metadata:/' /etc/kubernetes/manifests/kube-apiserver.yaml
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
 ```{{exec}}
+
+Remplace `metadata;` par `metadata:`, puis enregistre et quitte
+(`:wq`).
 
 **Erreur 2 — argument inconnu `--midichlorians=9000`**
 
@@ -59,8 +61,11 @@ crashe immédiatement. `crictl ps -a` puis `crictl logs <id>` montrent
 un rejet de l'argument au démarrage.
 
 ```
-sed -i '/--midichlorians=9000/d' /etc/kubernetes/manifests/kube-apiserver.yaml
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
 ```{{exec}}
+
+Supprime la ligne `- --midichlorians=9000`, puis enregistre et quitte
+(`:wq`).
 
 **Erreur 3 — `--tls-cert-file` pointe vers un fichier inexistant**
 
@@ -68,8 +73,12 @@ Une fois l'argument retiré, le process démarre mais échoue au
 chargement du certificat TLS.
 
 ```
-sed -i 's#--tls-cert-file=.*#--tls-cert-file=/etc/kubernetes/pki/apiserver.crt#' /etc/kubernetes/manifests/kube-apiserver.yaml
+vim /etc/kubernetes/manifests/kube-apiserver.yaml
 ```{{exec}}
+
+Remplace la valeur de `--tls-cert-file` par
+`/etc/kubernetes/pki/apiserver.crt`, puis enregistre et quitte
+(`:wq`).
 
 Une fois les 3 corrections faites, observe le retour à la normale :
 
