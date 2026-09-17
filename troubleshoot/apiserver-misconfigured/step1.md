@@ -4,14 +4,6 @@ L'apiserver ne démarre pas. Le manifest est volontairement mal
 configuré en 3 points. Répare les 3 erreurs pour permettre à
 kube-apiserver de démarrer.
 
-```
-crictl ps -a
-```{{exec}}
-
-```
-journalctl -u kubelet --no-pager | tail -100
-```{{exec}}
-
 <details>
 <summary>💡 Indice — erreur 1</summary>
 
