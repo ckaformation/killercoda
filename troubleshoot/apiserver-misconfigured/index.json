@@ -1,0 +1,23 @@
+{
+  "title": "Troubleshooting kube-apiserver — 3 erreurs cumulées",
+  "description": "Appliquer la méthodologie de diagnostic (crictl, journalctl, /var/log) pour identifier et corriger 3 erreurs présentes dès le départ dans le manifest kube-apiserver.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Trois erreurs, une méthode",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
