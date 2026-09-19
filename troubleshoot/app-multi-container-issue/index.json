@@ -1,0 +1,28 @@
+{
+  "title": "Application multi-conteneurs — conflit de port",
+  "description": "Extraire les logs de tous les conteneurs d'un pod, diagnostiquer un conflit de port entre deux conteneurs, et corriger le déploiement.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Récupérer les logs",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Corriger le conflit de port",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
