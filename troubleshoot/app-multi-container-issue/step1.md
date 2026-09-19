@@ -23,7 +23,7 @@ La commande `kubectl logs` permet de récupérer les logs d'un pod.
 <summary>✅ Solution</summary>
 
 ```
-kubectl logs deployment/twin-suns -n tatooine --all-containers=true --prefix=true > /root/logs.log
+kubectl logs deployment/twin-suns -n tatooine --all-containers > /root/logs.log
 ```{{exec}}
 
 Vérifie le résultat :
