@@ -1,0 +1,33 @@
+{
+  "title": "Troubleshooting Horizontal Pod Autoscaler",
+  "description": "Créer un HPA, diagnostiquer pourquoi il ne scale pas au minimum attendu, puis générer de la charge CPU pour le déclencher réellement.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Créer le HPA",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Où sont passés les pods ?",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — Déclencher le HPA",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
