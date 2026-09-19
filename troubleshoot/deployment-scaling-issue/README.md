@@ -15,6 +15,15 @@
   via `kubectl` à chaque exécution, ce qui devrait le rendre plus
   robuste.
 
+- **`--cpu` plutôt que `--cpu-percent`** dans la commande `kubectl
+  autoscale` (`step1.md`) : `--cpu-percent` est déprécié au profit de
+  `--cpu` (accepte un pourcentage comme `60%`, ou une quantité absolue
+  comme `500m`), confirmé sur un commit récent de la doc officielle
+  `kubernetes/website` et le man `kubectl-autoscale` à jour.
+  `step1-verify.sh` n'a pas eu besoin de changer : il vérifie l'objet
+  HPA résultant (`spec.metrics[]` / `spec.targetCPUUtilizationPercentage`),
+  identique quel que soit le flag utilisé à la création.
+
 ## Contenu
 
 ```

@@ -25,7 +25,7 @@ Il est possible d'utiliser `kubectl autoscale`.
 <summary>✅ Solution</summary>
 
 ```
-kubectl autoscale deployment millennium-falcon -n kessel-run --min=10 --max=20 --cpu-percent=60
+kubectl autoscale deployment millennium-falcon -n kessel-run --min=10 --max=20 --cpu=60%
 ```{{exec}}
 
 </details>
