@@ -2,14 +2,18 @@
 
 ## Corrections suite à retour de Pierrot
 
-- **Vérification de disponibilité ajoutée en tout début d'étape 1**
-  (`kubectl wait --for=condition=Ready` sur les pods applicatifs puis
-  sur les pods `metrics-server`) : contrairement au pattern sentinel/
-  `wait-for-prep.sh` retiré sur un scénario précédent (dont la cause
-  exacte du dysfonctionnement restait floue), ce scénario ne casse
-  jamais `kubectl` — j'ai donc pu utiliser directement des commandes
-  `kubectl wait` standards plutôt qu'un mécanisme de fichier sentinel,
-  plus simple et plus robuste ici.
+- **Vérification de disponibilité ajoutée en tout début d'étape 1**,
+  via un script unique `wait-for-ready.sh` plutôt que des commandes
+  `kubectl wait` visibles à l'élève : `intro-background.sh` écrit ce
+  script sur disque (`/root/wait-for-ready.sh`), qui se contente
+  d'afficher "Préparation en cours..." pendant qu'il vérifie, en
+  interne, l'état réel des pods applicatifs et de `metrics-server`.
+  Contrairement au pattern sentinel retiré sur un scénario précédent
+  (dont la cause exacte du dysfonctionnement restait floue), ce script
+  ne dépend d'aucun fichier sentinel écrit par le script
+  d'arrière-plan : il interroge directement l'état vivant du cluster
+  via `kubectl` à chaque exécution, ce qui devrait le rendre plus
+  robuste.
 
 ## Contenu
 

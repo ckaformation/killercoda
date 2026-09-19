@@ -3,11 +3,7 @@
 ## 0. Vérifier que l'environnement est prêt
 
 ```
-kubectl wait --for=condition=Ready pod -l app=millennium-falcon -n kessel-run --timeout=120s
-```{{exec}}
-
-```
-kubectl wait --for=condition=Ready pod -l k8s-app=metrics-server -n kube-system --timeout=120s
+./wait-for-ready.sh
 ```{{exec}}
 
 ## 1. Créer le HPA

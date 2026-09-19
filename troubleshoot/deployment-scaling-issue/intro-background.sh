@@ -3,6 +3,29 @@ set -e
 
 NS="kessel-run"
 
+cat > /root/wait-for-ready.sh <<'EOS'
+#!/bin/bash
+NS="kessel-run"
+
+echo "Préparation de l'environnement en cours..."
+for i in $(seq 1 40); do
+  APP_TOTAL=$(kubectl get pods -n "$NS" -l app=millennium-falcon --no-headers 2>/dev/null | wc -l)
+  APP_READY=$(kubectl get pods -n "$NS" -l app=millennium-falcon -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' 2>/dev/null | grep -c '^True$')
+  METRICS_READY=$(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{range .items[*]}{.status.conditions[?(@.type=="Ready")].status}{"\n"}{end}' 2>/dev/null | grep -c '^True$')
+
+  if [ "$APP_TOTAL" -ge 3 ] 2>/dev/null && [ "$APP_READY" -ge "$APP_TOTAL" ] 2>/dev/null && [ "$METRICS_READY" -ge 1 ] 2>/dev/null; then
+    echo "Environnement prêt."
+    exit 0
+  fi
+  sleep 5
+done
+
+echo "L'environnement met plus de temps que prévu à se préparer."
+echo "Relance ce script dans quelques instants : ./wait-for-ready.sh"
+exit 1
+EOS
+chmod +x /root/wait-for-ready.sh
+
 echo "[prep] Installation de metrics-server"
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
