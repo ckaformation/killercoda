@@ -1,5 +1,16 @@
 # Scénario Killercoda — Troubleshooting HPA
 
+## Corrections suite à retour de Pierrot
+
+- **Vérification de disponibilité ajoutée en tout début d'étape 1**
+  (`kubectl wait --for=condition=Ready` sur les pods applicatifs puis
+  sur les pods `metrics-server`) : contrairement au pattern sentinel/
+  `wait-for-prep.sh` retiré sur un scénario précédent (dont la cause
+  exacte du dysfonctionnement restait floue), ce scénario ne casse
+  jamais `kubectl` — j'ai donc pu utiliser directement des commandes
+  `kubectl wait` standards plutôt qu'un mécanisme de fichier sentinel,
+  plus simple et plus robuste ici.
+
 ## Contenu
 
 ```
