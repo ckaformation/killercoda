@@ -70,9 +70,11 @@ hpa-troubleshoot/
   défaut de l'image) ne tourne dès le départ ; le pod reste idle, et
   `stress --cpu 1` n'est lancé qu'à l'étape 3 via `kubectl exec`, en
   plus du process principal.
-- **Aucun indice à l'étape 2**, conformément à la demande explicite —
-  contrairement aux étapes 1 et 3, qui ont chacune 1 indice + 1
-  solution.
+- **Indice + solution ajoutés à l'étape 2** (suite à retour de
+  Pierrot) : initialement sans aucun indice, conformément à la
+  demande d'origine ; l'indice pointe vers les quotas du namespace
+  sans donner le nom exact de la ressource en cause, et la solution
+  détaille la commande d'édition du `ResourceQuota`.
 - **Quota jamais nommé explicitement dans les textes visibles par
   l'élève** (`intro.md`, `step2.md`) : seul `step2-verify.sh` et
   `intro-background.sh` y font référence.
