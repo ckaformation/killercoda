@@ -40,6 +40,15 @@ args:
 - "8080"
 ```
 
+Retire aussi, pour ce même conteneur, le bloc `ports:` devenu obsolète
+(il pointait vers le port 80) :
+
+```yaml
+ports:
+- containerPort: 80
+  protocol: TCP
+```
+
 Enregistre et quitte. Vérifie :
 
 ```
