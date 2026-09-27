@@ -1,0 +1,28 @@
+{
+  "title": "Troubleshooting control plane — kube-controller-manager & kubelet",
+  "description": "Diagnostiquer un kube-controller-manager qui ne redémarre pas après une mise à jour, puis un kubelet en échec sur un second nœud.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — kube-controller-manager ne redémarre pas",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — kubelet en échec sur node01",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
