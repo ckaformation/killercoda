@@ -21,6 +21,11 @@
       "description": "Scénarios de troubleshoot k8s."
     },
     {
+      "path": "helm-and-kustomize",
+      "title": "Helm et Kustomize",
+      "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
+    },
+    {
       "path": "servicing-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
