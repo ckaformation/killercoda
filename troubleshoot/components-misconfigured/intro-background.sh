@@ -20,9 +20,8 @@ cat > /root/wait-for-ready.sh <<'EOS'
 echo "Préparation de l'environnement en cours..."
 for i in $(seq 1 40); do
   CM_RUNNING=$(crictl ps --name kube-controller-manager -q 2>/dev/null | head -n1)
-  NODE01_STATUS=$(kubectl get node node01 -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)
 
-  if [ -z "$CM_RUNNING" ] && { [ "$NODE01_STATUS" = "False" ] || [ "$NODE01_STATUS" = "Unknown" ]; }; then
+  if [ -z "$CM_RUNNING" ]; then
     echo "Environnement prêt."
     exit 0
   fi

@@ -59,10 +59,9 @@ exemple, pour confirmer la connectivité avant d'aller plus loin).
 - **`vim` plutôt que `sed`** pour les corrections manuelles côté
   élève, cohérent avec la préférence déjà exprimée sur les scénarios
   apiserver.
-- **`wait-for-ready.sh`** : ne peut pas attendre un état "sain" des
-  composants cassés par design — vérifie plutôt que les 2 pannes sont
-  bien *observables* (`kube-controller-manager` absent de `crictl ps`,
-  `node01` NotReady/Unknown) avant de signaler l'environnement prêt.
+- **`wait-for-ready.sh` retiré entièrement** (script et lancement),
+  à la demande de Pierrot : l'étape 1 démarre directement sans étape
+  de synchronisation.
 
 ## Sources utilisées
 
