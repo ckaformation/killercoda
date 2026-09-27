@@ -1,0 +1,33 @@
+{
+  "title": "Kustomize — base et overlays multi-région",
+  "description": "Construire une structure base/overlays Kustomize, déployer plusieurs environnements, puis désinstaller proprement une ressource partagée.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Déployer l'overlay europe-west1",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Ajouter l'overlay us-west1",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — Retirer le Service depuis base",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
