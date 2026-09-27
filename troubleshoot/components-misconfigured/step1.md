@@ -1,12 +1,6 @@
 # Étape 1 — kube-controller-manager ne redémarre pas
 
-## 0. Vérifier que l'environnement est prêt
-
-```
-./wait-for-ready.sh
-```{{exec}}
-
-## 1. Diagnostiquer
+## Diagnostiquer
 
 Le manifest de `kube-controller-manager` vient d'être mis à jour,
 mais le composant ne redémarre pas. Corrige le problème.
