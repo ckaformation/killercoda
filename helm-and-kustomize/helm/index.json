@@ -1,0 +1,33 @@
+{
+  "title": "Cycle de vie d'une release Helm — install, upgrade, rollback",
+  "description": "Installer une release Helm (podinfo), mettre à jour une autre release existante (falco), puis revenir à une révision précédente.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Étape 1 — Installer podinfo",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Étape 2 — Upgrade falco",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Étape 3 — Rollback falco",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
