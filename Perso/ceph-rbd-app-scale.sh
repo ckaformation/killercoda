@@ -3,22 +3,37 @@
 # qui montent un PVC sur la StorageClass RBD d'ODF (mode externe).
 # Les DeploymentConfigs sont volontairement ignorées.
 #
-# Usage :
-#   ./ceph-rbd-app-scale.sh list    # affiche ce qui serait arrêté (aucune modification)
-#   ./ceph-rbd-app-scale.sh down    # mémorise les replicas en annotation puis scale à 0
-#   ./ceph-rbd-app-scale.sh check   # liste les volumes RBD encore attachés à un nœud
-#   ./ceph-rbd-app-scale.sh up      # restaure les replicas mémorisés
+# Usage : ./ceph-rbd-app-scale.sh [--exclude-system] {list|down|check|up}
+#   list    affiche ce qui serait arrêté (aucune modification)
+#   down    mémorise les replicas en annotation puis scale à 0
+#   check   liste les volumes RBD encore attachés à un nœud (tous namespaces)
+#   up      restaure les replicas mémorisés
+#
+# Par défaut, TOUS les namespaces sont traités, y compris openshift* et kube*.
+#   -x, --exclude-system   ignore les namespaces openshift* et kube*
+#                          (s'applique à list, down et up)
 #
 # Variables optionnelles :
-#   SC          StorageClass ciblée  (défaut : ocs-external-storagecluster-ceph-rbd)
-#   EXCLUDE_NS  regex des namespaces ignorés (défaut : ^(openshift|kube)-)
-#               -> EXCLUDE_NS='^$' pour ne rien exclure
+#   SC          StorageClass ciblée (défaut : ocs-external-storagecluster-ceph-rbd)
+#   EXCLUDE_NS  regex personnalisée de namespaces à ignorer (défaut : aucune)
 set -euo pipefail
 
 SC="${SC:-ocs-external-storagecluster-ceph-rbd}"
-EXCLUDE_NS="${EXCLUDE_NS:-^(openshift|kube)-}"
+EXCLUDE_NS="${EXCLUDE_NS:-}"
 ANNOT="rbd-scaledown/replicas"
 RBD_DRIVER="openshift-storage.rbd.csi.ceph.com"
+
+usage() { echo "usage: $0 [--exclude-system] {list|down|check|up}" >&2; exit 1; }
+
+cmd=""
+for arg in "$@"; do
+  case "$arg" in
+    -x|--exclude-system) EXCLUDE_NS='^(openshift|kube)' ;;
+    list|down|check|up)  [ -z "$cmd" ] || usage; cmd="$arg" ;;
+    *)                   usage ;;
+  esac
+done
+cmd="${cmd:-list}"
 
 command -v jq >/dev/null || { echo "jq est requis" >&2; exit 1; }
 
@@ -40,7 +55,7 @@ targets() {
       | "\(.metadata.namespace)/\(.metadata.name)" ] as $pvcs
     | ($pvcs | map({(.): true}) | add // {}) as $set
     | .items[]
-    | select(.metadata.namespace | test($ex) | not)
+    | select($ex == "" or (.metadata.namespace | test($ex) | not))
     | select((.spec.replicas // 1) > 0)
     | .metadata.namespace as $ns | .metadata.name as $n
     | ( [ .spec.template.spec.volumes[]?.persistentVolumeClaim.claimName // empty
@@ -66,8 +81,9 @@ down() {
 }
 
 up() {
-  oc get "$kinds" -A -o json | jq -r --arg a "$ANNOT" '
+  oc get "$kinds" -A -o json | jq -r --arg a "$ANNOT" --arg ex "$EXCLUDE_NS" '
     .items[] | select(.metadata.annotations[$a]?)
+    | select($ex == "" or (.metadata.namespace | test($ex) | not))
     | "\(.metadata.namespace) \(.kind | ascii_downcase)/\(.metadata.name) \(.metadata.annotations[$a])"
   ' > "$tmp/restore"
   [ -s "$tmp/restore" ] || { echo "Rien à restaurer."; return; }
@@ -95,10 +111,11 @@ check() {
   fi
 }
 
-case "${1:-list}" in
+[ -n "$EXCLUDE_NS" ] && echo "(namespaces ignorés : $EXCLUDE_NS)" >&2
+
+case "$cmd" in
   list)  targets | tabulate ;;
   down)  down ;;
   up)    up ;;
   check) check ;;
-  *) echo "usage: $0 {list|down|check|up}" >&2; exit 1 ;;
 esac
