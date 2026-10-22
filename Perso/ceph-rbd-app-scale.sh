@@ -1,39 +1,53 @@
 #!/usr/bin/env bash
 # ceph-rbd-app-scale.sh — Scale à 0 (puis restaure) les Deployments et StatefulSets
-# qui montent un PVC sur la StorageClass RBD d'ODF (mode externe).
+# qui montent un PVC sur une StorageClass ODF externe : RBD ou CephFS.
 # Les DeploymentConfigs sont volontairement ignorées.
 #
-# Usage : ./ceph-rbd-app-scale.sh [--exclude-system] {list|down|check|up}
-#   list    affiche ce qui serait arrêté (aucune modification)
+# Usage : ./ceph-rbd-app-scale.sh [--exclude-system] {rbd|cephfs} {list|down|check|up}
+#
+#   rbd       cible la StorageClass ocs-external-storagecluster-ceph-rbd
+#   cephfs    cible la StorageClass ocs-external-storagecluster-cephfs
+#
+#   list    affiche ce qui serait arrêté, sans rien modifier (commande par défaut)
 #   down    mémorise les replicas en annotation puis scale à 0
-#   check   liste les volumes RBD encore attachés à un nœud (tous namespaces)
+#   check   liste les pods et VolumeAttachments qui utilisent encore la StorageClass
+#           (tous namespaces)
 #   up      restaure les replicas mémorisés
 #
 # Par défaut, TOUS les namespaces sont traités, y compris openshift* et kube*.
 #   -x, --exclude-system   ignore les namespaces openshift* et kube*
 #                          (s'applique à list, down et up)
 #
+# Chaque type a sa propre annotation (rbd-scaledown/replicas, cephfs-scaledown/replicas) :
+# un "up cephfs" ne relance jamais ce qu'un "down rbd" a arrêté, et inversement.
+#
 # Variables optionnelles :
-#   SC          StorageClass ciblée (défaut : ocs-external-storagecluster-ceph-rbd)
+#   SC          force une autre StorageClass que celle par défaut du type choisi
 #   EXCLUDE_NS  regex personnalisée de namespaces à ignorer (défaut : aucune)
 set -euo pipefail
 
-SC="${SC:-ocs-external-storagecluster-ceph-rbd}"
 EXCLUDE_NS="${EXCLUDE_NS:-}"
-ANNOT="rbd-scaledown/replicas"
-RBD_DRIVER="openshift-storage.rbd.csi.ceph.com"
+kinds="deployments.apps,statefulsets.apps"
 
-usage() { echo "usage: $0 [--exclude-system] {list|down|check|up}" >&2; exit 1; }
+usage() { echo "usage: $0 [--exclude-system] {rbd|cephfs} {list|down|check|up}" >&2; exit 1; }
 
-cmd=""
+type="" cmd=""
 for arg in "$@"; do
   case "$arg" in
     -x|--exclude-system) EXCLUDE_NS='^(openshift|kube)' ;;
+    rbd|cephfs)          [ -z "$type" ] || usage; type="$arg" ;;
     list|down|check|up)  [ -z "$cmd" ] || usage; cmd="$arg" ;;
     *)                   usage ;;
   esac
 done
+[ -n "$type" ] || usage
 cmd="${cmd:-list}"
+
+case "$type" in
+  rbd)    SC="${SC:-ocs-external-storagecluster-ceph-rbd}" ;;
+  cephfs) SC="${SC:-ocs-external-storagecluster-cephfs}" ;;
+esac
+ANNOT="${type}-scaledown/replicas"
 
 command -v jq >/dev/null || { echo "jq est requis" >&2; exit 1; }
 
@@ -41,8 +55,6 @@ tabulate() { if command -v column >/dev/null; then column -t; else cat; fi; }
 
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
-
-kinds="deployments.apps,statefulsets.apps"
 
 # Sortie : "<namespace> <kind>/<nom> <replicas>" pour chaque workload concerné
 targets() {
@@ -86,7 +98,7 @@ up() {
     | select($ex == "" or (.metadata.namespace | test($ex) | not))
     | "\(.metadata.namespace) \(.kind | ascii_downcase)/\(.metadata.name) \(.metadata.annotations[$a])"
   ' > "$tmp/restore"
-  [ -s "$tmp/restore" ] || { echo "Rien à restaurer."; return; }
+  [ -s "$tmp/restore" ] || { echo "Rien à restaurer pour $type."; return; }
   while read -r ns obj rep; do
     echo "<< $ns $obj : 0 -> $rep"
     oc scale -n "$ns" "$obj" --replicas="$rep"
@@ -94,20 +106,50 @@ up() {
   done < "$tmp/restore"
 }
 
+# Deux vérifications, car selon le CSIDriver (attachRequired), CephFS peut ne
+# créer aucun VolumeAttachment : la liste des pods fait alors foi.
 check() {
-  oc get volumeattachment -o json > "$tmp/va.json"
+  oc get sc "$SC" >/dev/null
+  oc get pvc -A -o json > "$tmp/pvc.json"
+  oc get pods -A -o json > "$tmp/pods.json"
   oc get pv -o json > "$tmp/pv.json"
-  jq -r --arg d "$RBD_DRIVER" --slurpfile pv "$tmp/pv.json" '
-    ($pv[0].items | map({(.metadata.name):
-        "\(.spec.claimRef.namespace // "?")/\(.spec.claimRef.name // "?")"}) | add // {}) as $claims
-    | .items[] | select(.spec.attacher == $d)
-    | "\($claims[.spec.source.persistentVolumeName] // "?") \(.spec.source.persistentVolumeName) \(.spec.nodeName)"
+  oc get volumeattachment -o json > "$tmp/va.json"
+
+  jq -r --arg sc "$SC" --slurpfile pvc "$tmp/pvc.json" '
+    ($pvc[0].items | map(select(.spec.storageClassName == $sc)
+        | {("\(.metadata.namespace)/\(.metadata.name)"): true}) | add // {}) as $set
+    | .items[]
+    | select(.status.phase != "Succeeded" and .status.phase != "Failed")
+    | .metadata.namespace as $ns
+    | .metadata.name as $p
+    | (.spec.nodeName // "-") as $node
+    | .spec.volumes[]?.persistentVolumeClaim.claimName // empty
+    | select($set["\($ns)/\(.)"] == true)
+    | "\($ns) \($p) \(.) \($node)"
+  ' "$tmp/pods.json" > "$tmp/pods"
+
+  jq -r --arg sc "$SC" --slurpfile pv "$tmp/pv.json" '
+    ($pv[0].items | map(select(.spec.storageClassName == $sc)
+        | {(.metadata.name): "\(.spec.claimRef.namespace // "?")/\(.spec.claimRef.name // "?")"})
+        | add // {}) as $claims
+    | .items[]
+    | .spec.source.persistentVolumeName as $pvn
+    | select($pvn != null and $claims[$pvn] != null)
+    | "\($claims[$pvn]) \($pvn) \(.spec.nodeName)"
   ' "$tmp/va.json" > "$tmp/attached"
+
+  if [ -s "$tmp/pods" ]; then
+    echo "Pods utilisant encore $SC (NAMESPACE POD PVC NODE) :"
+    tabulate < "$tmp/pods"
+  else
+    echo "OK : aucun pod actif n'utilise $SC."
+  fi
+  echo
   if [ -s "$tmp/attached" ]; then
-    echo "Volumes RBD encore attachés (PVC PV NODE) :"
+    echo "VolumeAttachments encore présents (PVC PV NODE) :"
     tabulate < "$tmp/attached"
   else
-    echo "OK : plus aucun volume RBD attaché."
+    echo "OK : aucun VolumeAttachment sur $SC."
   fi
 }
 
