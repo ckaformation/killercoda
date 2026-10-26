@@ -7,7 +7,7 @@ rollout-deployments/
 ├── index.json                   # backend kubernetes-kubeadm-1node, 3 étapes
 ├── intro.md
 ├── intro-background.sh          # alias k + wait-for-prep.sh + 3 Deployments (namespace default)
-├── step1.md / step1-verify.sh   # wait-for-prep.sh ; millennium-falcon : Recreate -> RollingUpdate (1 / 0) + changement d'APP_RELEASE + rollout status
+├── step1.md / step1-verify.sh   # wait-for-prep.sh ; millennium-falcon : un seul kubectl edit (Recreate -> RollingUpdate 1 / 0 + APP_RELEASE) + rollout status
 ├── step2.md / step2-verify.sh   # death-star : rollout en pause -> rollout resume
 ├── step3.md / step3-verify.sh   # tie-fighter (1 réplica, Recreate) : 4 révisions, la 4e défectueuse -> rollout undo --to-revision=2
 └── finish.md
@@ -32,6 +32,7 @@ La demande disait que `death-star` « a subi une modif qui a généré une 2ème
 ## Choix effectués
 
 - **Noms Star Wars** pour les Deployments, tous dans `default` comme demandé.
+- **Étape 1 : un seul `kubectl edit`** pour la stratégie et la variable, avec les bonnes valeurs données telles quelles dans les blocs (avant/après pour la stratégie, la ligne `value: "v3"` pour la variable). L'élève fait les modifications à la main dans vi ; l'énoncé rappelle les touches vi utiles et la recherche `/strategy` et `/APP_RELEASE`. Une seule révision est créée (celle de la variable), ce que l'étape fait constater à la fin. La démonstration « changer la stratégie seule ne crée pas de révision » n'est donc plus faite en pratique ; elle reste citée dans `finish.md`, qui est inchangé.
 - **1 réplica pour `death-star` et `tie-fighter`** (2 pour `millennium-falcon`, dont la mise à jour progressive doit rester visible).
 - **`tie-fighter` en `Recreate`** : avec un seul réplica, l'ancien pod (révision 3) est arrêté avant le démarrage du nouveau. À la révision 4, il ne reste donc qu'un pod, en `CrashLoopBackOff`, et le Deployment est indisponible (`READY 0/1`, `AVAILABLE 0`), ce que l'élève doit voir. La stratégie ne fait pas partie du pod template : elle est la même pour les 4 révisions et ne modifie pas leur numérotation.
 - **`readinessProbe` (httpGet `/` sur le port 80) sur tous les pods.** Un conteneur qui démarre puis plante en quelques millisecondes ne devient ainsi jamais prêt, ce qui rend l'état « indisponible » de `tie-fighter` stable. Elle rend aussi `rollout status` fiable pour les autres Deployments.
@@ -49,5 +50,6 @@ Je n'ai pas pu exécuter ce scénario contre un cluster Kubernetes. Ce qui a ét
 - **Numérotation après le rollback** : j'attends les révisions 1, 3, 4, 5 après `rollout undo --to-revision=2` (la 2 est renumérotée en 5). C'est le comportement documenté, déjà utilisé dans le scénario `workload-scheduling-basics`, mais je ne l'ai pas observé. `step3-verify.sh` exige une révision active supérieure ou égale à 5.
 - **Pod en `CrashLoopBackOff`** : nginx avec `-c` vers un fichier inexistant doit sortir en erreur immédiatement, ce qui donne `Error` puis `CrashLoopBackOff` après quelques redémarrages (de l'ordre d'une minute). C'est ce que `wait-for-prep.sh` attend ; non observé.
 - **Durée de la préparation** : de l'ordre de deux minutes attendues (attente séquentielle des révisions 1 à 3 de `tie-fighter`, pull de `nginx:alpine`, puis apparition du `CrashLoopBackOff`). Accès à Docker Hub supposé, comme dans les scénarios précédents.
+- **Édition à froid de la stratégie** : passer de `Recreate` à `RollingUpdate` avec le bloc `rollingUpdate` dans le même `kubectl edit` que le changement de variable doit être accepté par l'API (validation connue : `rollingUpdate` interdit avec `Recreate`, pas dans l'autre sens). Non exécuté.
 - **Syntaxes `kubectl`** : `kubectl exec deploy/death-star -- sh -c 'echo $APP_RELEASE'`, les `jsonpath` avec filtre `[?(@.name=="APP_RELEASE")]` et l'annotation `deployment\.kubernetes\.io/revision` sont écrits de mémoire et non exécutés.
 - **Lien du `finish.md`** : URL canonique de la documentation des Deployments, non vérifiée par un fetch.
