@@ -18,7 +18,7 @@ Un raccourci `k` (identique à `kubectl`) est aussi disponible.
 
 ## Ce que tu vas faire
 
-1. Passer `millennium-falcon` en `RollingUpdate` (`maxSurge: 1`, `maxUnavailable: 0`), puis déployer une nouvelle valeur de `APP_RELEASE` et suivre le rollout.
+1. Dans un seul `kubectl edit`, passer `millennium-falcon` en `RollingUpdate` (`maxSurge: 1`, `maxUnavailable: 0`) et changer la valeur de `APP_RELEASE`, puis suivre le rollout.
 2. Comprendre pourquoi une modification de `death-star` n'est jamais déployée, et débloquer la situation.
 3. Constater que `tie-fighter` a un pod en `CrashLoopBackOff`, observer ses révisions et revenir à la révision 2.
 
