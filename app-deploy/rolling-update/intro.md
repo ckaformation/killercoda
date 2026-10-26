@@ -9,12 +9,12 @@ Un cluster Kubernetes mono-nœud, avec trois `Deployments` dans le namespace `de
 | Deployment | Réplicas | Situation |
 |---|---|---|
 | `millennium-falcon` | 2 | Déployé avec la stratégie `Recreate` |
-| `death-star` | 2 | Son rollout a été mis en pause |
-| `tie-fighter` | 2 | Quatre révisions déjà déployées, dont la dernière pose problème |
+| `death-star` | 1 | Son rollout a été mis en pause |
+| `tie-fighter` | 1 | Stratégie `Recreate`, quatre révisions déjà déployées, dont la dernière pose problème |
 
 Un raccourci `k` (identique à `kubectl`) est aussi disponible.
 
-> La préparation de l'environnement prend environ une minute. La première commande de l'étape 1 te permet de vérifier que les trois Deployments sont bien là.
+> La préparation de l'environnement prend un peu de temps (elle doit laisser le temps à l'un des Deployments de tomber en erreur). La première commande de l'étape 1 t'invite à patienter jusqu'à ce que tout soit prêt.
 
 ## Ce que tu vas faire
 

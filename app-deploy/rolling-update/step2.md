@@ -1,6 +1,6 @@
 # Étape 2 — Une modification qui n'est jamais déployée
 
-L'équipe a modifié la variable `APP_RELEASE` du Deployment `death-star` (de `v1` à `v2`), mais rien ne se passe : les pods ne sont jamais remplacés. Le rollout de ce Deployment a été mis en pause avant la modification.
+L'équipe a modifié la variable `APP_RELEASE` du Deployment `death-star` (de `v1` à `v2`), mais rien ne se passe : le pod n'est jamais remplacé. Le rollout de ce Deployment a été mis en pause avant la modification.
 
 ## 1. Comparer le spec et les pods en cours d'exécution
 
@@ -40,7 +40,7 @@ Tu dois voir `true`.
 
 `kubectl get rs -l app=death-star`{{exec}}
 
-Un nouveau ReplicaSet est apparu et porte les 2 pods ; l'ancien est à 0.
+Un nouveau ReplicaSet est apparu et porte le pod ; l'ancien est à 0.
 
 `kubectl rollout history deployment/death-star`{{exec}}
 

@@ -2,11 +2,15 @@
 
 Le Deployment `millennium-falcon` utilise la stratégie `Recreate` : à chaque mise à jour, **tous** les anciens pods sont arrêtés avant que les nouveaux ne démarrent, ce qui coupe le service pendant un instant. On veut une mise à jour progressive qui ne fait jamais descendre le nombre de pods disponibles sous 2.
 
-## 0. Vérifier que l'environnement est prêt
+## 0. Attendre que l'environnement soit prêt
+
+`/root/wait-for-prep.sh`{{exec}}
+
+Cette commande attend la fin de la préparation de l'environnement. Attends qu'elle affiche « C'est pret ! » avant de continuer.
 
 `kubectl get deployments`{{exec}}
 
-Tu dois voir `millennium-falcon`, `death-star` et `tie-fighter`. S'il en manque, la préparation n'est pas terminée : attends quelques secondes et relance la commande.
+Tu dois voir `millennium-falcon`, `death-star` et `tie-fighter`.
 
 ## 1. Observer l'état actuel
 
