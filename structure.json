@@ -26,6 +26,11 @@
       "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
     },
     {
+      "path": "fundamuntals",
+      "title": "Fondamentaux",
+      "description": "Apprendre les fondamentaux."
+    },
+    {
       "path": "servicing-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
