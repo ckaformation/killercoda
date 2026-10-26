@@ -31,6 +31,16 @@
       "description": "Apprendre les fondamentaux."
     },
     {
+      "path": "fundamentals",
+      "title": "Fondamentaux",
+      "description": "Apprendre les fondamentaux."
+    },
+    {
+      "path": "app-deploy",
+      "title": "Déploiement d'applications",
+      "description": "Déployer et mettre à jour des applications en toute sécurité. Cela nécessite de comprendre les Deployments et les mises à jour progressives (rolling updates), de mettre en œuvre des stratégies courantes comme le blue/green et le canary, et d’utiliser Helm et Kustomize pour déployer et personnaliser les manifests."
+    },
+    {
       "path": "servicing-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
