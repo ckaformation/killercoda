@@ -26,7 +26,7 @@
       "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
     },
     {
-      "path": "fundamuntals",
+      "path": "fundamentals",
       "title": "Fondamentaux",
       "description": "Apprendre les fondamentaux."
     },
