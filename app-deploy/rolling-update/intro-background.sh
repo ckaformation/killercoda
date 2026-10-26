@@ -1,32 +1,53 @@
 #!/bin/bash
 # ============================================================================
 # Preparation silencieuse (tout dans le namespace default) :
+#   - /root/wait-for-prep.sh : depose des le debut ; il attend un fichier
+#     sentinelle (/tmp/.scenario-prep-done) cree tout a la fin de ce script,
+#     une fois que le pod de tie-fighter est effectivement en
+#     CrashLoopBackOff. L'etape 1 invite l'eleve a le lancer.
 #   - lien symbolique k -> kubectl
 #   - millennium-falcon : 2 replicas, nginx:alpine, APP_RELEASE="v2",
 #     strategie Recreate.
-#   - death-star : 2 replicas, deployee en APP_RELEASE="v1" (rollout termine),
+#   - death-star : 1 replica, deployee en APP_RELEASE="v1" (rollout termine),
 #     puis MIS EN PAUSE, puis modifie (APP_RELEASE="v2"). Tant que le
 #     deployment est en pause, la modification est enregistree dans le spec
 #     mais aucun nouveau ReplicaSet (donc aucune nouvelle revision) n'est
 #     cree : la revision 2 n'apparait qu'au "rollout resume".
-#   - tie-fighter : 2 replicas, 4 revisions creees dans l'ordre :
+#   - tie-fighter : 1 replica, strategie Recreate, 4 revisions creees dans
+#     l'ordre :
 #       1 = initial deployment    (APP_RELEASE=v1)
 #       2 = v2 config changes     (APP_RELEASE=v2)
 #       3 = v3 rollout            (APP_RELEASE=v3)
 #       4 = v3 hotfix             (APP_RELEASE=v3 + commande nginx invalide)
 #     Les libelles sont poses via l'annotation kubernetes.io/change-cause
 #     pour qu'ils apparaissent dans "kubectl rollout history".
-#     La revision 4 n'est volontairement pas attendue : son pod ne devient
-#     jamais Ready (nginx ne trouve pas le fichier de configuration), ce qui
-#     donne un pod en CrashLoopBackOff, pendant que les 2 pods de la
-#     revision 3 restent en service.
-#   - tous les pods ont une readinessProbe httpGet / sur le port 80 : sans
-#     elle, un conteneur qui demarre puis plante immediatement pourrait etre
-#     brievement compte comme pret, et le rollout de la revision 4 pourrait
-#     alors arreter les pods sains.
-#   - pas de wait-for-prep.sh (juge peu fiable) : l'etape 1 invite l'eleve a
-#     verifier que les 3 Deployments existent.
+#     Avec Recreate et un seul replica, l'ancien pod (revision 3) est arrete
+#     avant le demarrage du nouveau : a la revision 4, il ne reste donc qu'un
+#     seul pod, en CrashLoopBackOff (nginx ne trouve pas son fichier de
+#     configuration), et le Deployment est indisponible.
+#   - tous les pods ont une readinessProbe httpGet / sur le port 80 : un
+#     conteneur qui demarre puis plante immediatement ne devient ainsi jamais
+#     Ready, ce qui rend l'etat "indisponible" stable et fiable.
 # ============================================================================
+
+rm -f /tmp/.scenario-prep-done
+
+cat > /root/wait-for-prep.sh << 'WAITEOF'
+#!/bin/bash
+echo "Preparation de l'environnement en cours (millennium-falcon, death-star, tie-fighter)..."
+TIMEOUT=420
+ELAPSED=0
+while [ ! -f /tmp/.scenario-prep-done ] && [ "$ELAPSED" -lt "$TIMEOUT" ]; do
+  sleep 3
+  ELAPSED=$((ELAPSED + 3))
+done
+if [ -f /tmp/.scenario-prep-done ]; then
+  echo "C'est pret ! Tu peux continuer."
+else
+  echo "La preparation prend plus de temps que prevu. Patiente encore un peu avant de continuer."
+fi
+WAITEOF
+chmod +x /root/wait-for-prep.sh
 
 ln -sf "$(which kubectl)" /usr/local/bin/k
 
@@ -73,7 +94,7 @@ spec:
           periodSeconds: 3
 EOF
 
-# --- 2. death-star (deploye, puis mis en pause, puis modifie) ---
+# --- 2. death-star (1 replica ; deploye, puis mis en pause, puis modifie) ---
 cat <<'EOF' | kubectl apply -f -
 apiVersion: apps/v1
 kind: Deployment
@@ -82,7 +103,7 @@ metadata:
   annotations:
     kubernetes.io/change-cause: "Initial deployment"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: death-star
@@ -115,7 +136,7 @@ kubectl rollout pause deployment/death-star
 kubectl set env deployment/death-star APP_RELEASE=v2
 kubectl annotate deployment/death-star kubernetes.io/change-cause="v2 config changes" --overwrite
 
-# --- 3. tie-fighter (4 revisions, la derniere defectueuse) ---
+# --- 3. tie-fighter (1 replica, Recreate, 4 revisions, la derniere defectueuse) ---
 # $1 = valeur de APP_RELEASE ; $2 = libelle (change-cause) ; $3 = lignes YAML
 # supplementaires pour le conteneur (indentees de 8 espaces), vides par defaut.
 apply_tie_fighter() {
@@ -127,7 +148,9 @@ metadata:
   annotations:
     kubernetes.io/change-cause: "$2"
 spec:
-  replicas: 2
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: tie-fighter
@@ -167,7 +190,18 @@ kubectl rollout status deployment/tie-fighter --timeout=180s
 # On n'attend pas la fin du rollout : il ne se terminera jamais.
 apply_tie_fighter "v3" "v3 hotfix" '        command: ["nginx", "-c", "/etc/nginx/hotfix.conf"]'
 
-# On s'assure simplement que millennium-falcon a termine son deploiement.
+# On s'assure que millennium-falcon a termine son deploiement.
 kubectl rollout status deployment/millennium-falcon --timeout=180s
+
+# --- Attendre que le pod de tie-fighter soit reellement en CrashLoopBackOff ---
+# (180 s maximum ; si le statut n'est jamais atteint, la sentinelle n'est pas
+# creee et wait-for-prep.sh finit par afficher son message de depassement)
+for i in $(seq 1 60); do
+  if kubectl get pods -l app=tie-fighter --no-headers 2>/dev/null | grep -q "CrashLoopBackOff"; then
+    touch /tmp/.scenario-prep-done
+    break
+  fi
+  sleep 3
+done
 
 exit 0
