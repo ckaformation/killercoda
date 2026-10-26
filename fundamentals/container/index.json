@@ -1,0 +1,38 @@
+{
+  "title": "Conteneurs : build, run, registry local et registry publique",
+  "description": "Construis une image avec un Dockerfile, lance-la, publie-la dans un registre local, puis compare avec une image tirée d'un registre public.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Construire une image",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Lancer un conteneur et lister les conteneurs",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Publier l'image dans un registre local",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Lancer une image d'un registre public",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}
