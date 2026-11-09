@@ -1,0 +1,33 @@
+{
+  "title": "Pod : les fondamentaux, du kubectl au runtime",
+  "description": "Crée un pod, inspecte-le avec describe et logs, retrouve ses containers avec crictl sur le node qui l'héberge, puis compare ce qui se passe quand on supprime un container et quand on supprime le pod.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer un pod et l'inspecter",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Où tourne le pod ? Le retrouver côté runtime avec crictl",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Container supprimé, pod supprimé : qui recrée quoi ?",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
