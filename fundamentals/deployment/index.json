@@ -1,0 +1,33 @@
+{
+  "title": "Deployment : ReplicaSet, scaling et mise à jour d'image",
+  "description": "Crée un Deployment, observe le ReplicaSet et les pods qu'il engendre, scale-le, supprime un pod pour voir le Deployment le remplacer, puis mets à jour l'image et observe le nouveau ReplicaSet.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer un Deployment et observer les objets engendrés",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Scaler le Deployment et supprimer un pod",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Mettre à jour l'image et observer le nouveau ReplicaSet",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
