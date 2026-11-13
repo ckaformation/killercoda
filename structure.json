@@ -41,6 +41,11 @@
       "path": "fundamentals",
       "title": "CKAD - Fondamentaux",
       "description": "Apprendre les fondamentaux."
+    },
+    {
+      "path": "application-design-and-build",
+      "title": "CKAD - Design & build d'applications pour Kubernetes. ",
+      "description": "Build et modification d'images, choix du bon workload d'application pour Kubernetes."
     }
   ]
 }
