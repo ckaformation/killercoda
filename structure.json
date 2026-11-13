@@ -8,9 +8,19 @@
       "description": "Scénarios sur la mise en place et la configuration d'un cluster Kubernetes."
     },
     {
+      "path": "helm-and-kustomize",
+      "title": "CKA & CKAD - Helm et Kustomize",
+      "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
+    },
+    {
       "path": "workloads-scheduling",
       "title": "CKA - Workloads & Scheduling",
       "description": "Scénarios sur les objets de charge applicative (Pod, Deployment, StatefulSet, CronJob...) et leur ordonnancement."
+    },
+    {
+      "path": "servicing-networking",
+      "title": "CKA - Services & Networking",
+      "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
     },
     {
       "path": "stockage",
@@ -21,16 +31,6 @@
       "path": "troubleshoot",
       "title": "CKA - Troubleshooting",
       "description": "Scénarios de troubleshoot k8s."
-    },
-    {
-      "path": "servicing-networking",
-      "title": "CKA - Services & Networking",
-      "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
-    },
-    {
-      "path": "helm-and-kustomize",
-      "title": "CKA & CKAD - Helm et Kustomize",
-      "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
     },
     {
       "path": "app-deploy",
