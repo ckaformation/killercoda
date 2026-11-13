@@ -1,0 +1,28 @@
+{
+  "title": "Contexts : un même manifeste, deux namespaces",
+  "description": "Découvre le context courant de kubectl, crée un pod depuis un manifeste généré avec --dry-run, puis change de context pour créer le même pod dans un autre namespace.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Identifier le context courant et créer un pod",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Changer de context et recréer le même pod",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
