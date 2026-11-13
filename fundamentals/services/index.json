@@ -1,0 +1,43 @@
+{
+  "title": "Service : pourquoi, ClusterIP, DNS et NodePort",
+  "description": "Constate que l'IP d'un pod est éphémère, expose un Deployment avec un Service, vérifie qu'il survit au remplacement d'un pod, appelle-le par son nom DNS depuis un pod, puis ouvre-le sur les nodes avec un NodePort.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Joindre l'application par l'IP d'un pod",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Exposer le Deployment avec un Service",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Supprimer un pod : le Service continue de répondre",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Appeler le Service par son nom (DNS)",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      },
+      {
+        "title": "Atteindre le Service depuis les nodes avec un NodePort",
+        "text": "step5.md",
+        "verify": "step5-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-2nodes"
+  }
+}
