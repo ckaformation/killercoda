@@ -1,4 +1,6 @@
 {
+  "title": "CKA",
+  "description": "Certified Kubernetes Adminitrator scénarios",
   "items": [
     {
       "path": "cluster-architecture-installation-configuration",
