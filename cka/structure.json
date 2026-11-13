@@ -1,39 +1,10 @@
 {
-  "title": "CKA",
-  "description": "Certified Kubernetes Adminitrator scénarios",
   "items": [
+    { "path": "app-deploy" },
+    { "path": "cluster-architecture-installation-configuration" },
+    { "path": "helm-and-kustomize" },
     {
-      "path": "cluster-architecture-installation-configuration",
-      "title": "Cluster architecture, Installation et configuration",
-      "description": "Scénarios sur la mise en place et la configuration d'un cluster Kubernetes."
-    },
-    {
-      "path": "workloads-scheduling",
-      "title": "Workloads & Scheduling",
-      "description": "Scénarios sur les objets de charge applicative (Pod, Deployment, StatefulSet, CronJob...) et leur ordonnancement."
-    },
-    {
-      "path": "stockage",
-      "title": "Stockage k8s",
-      "description": "Scénarios sur les objets de stockage (pv, pvc, storageclass,...)."
-    },
-    {
-      "path": "troubleshoot",
-      "title": "Troubleshooting",
-      "description": "Scénarios de troubleshoot k8s."
-    },
-    {
-      "path": "helm-and-kustomize",
-      "title": "Helm et Kustomize",
-      "description": "Scénarios sur l'utilisation des outils Helm et Kustomize."
-    },
-    {
-      "path": "app-deploy",
-      "title": "Déploiement d'applications",
-      "description": "Déployer et mettre à jour des applications en toute sécurité. Cela nécessite de comprendre les Deployments et les mises à jour progressives (rolling updates), de mettre en œuvre des stratégies courantes comme le blue/green et le canary, et d’utiliser Helm et Kustomize pour déployer et personnaliser les manifests."
-    },
-    {
-      "path": "servicing-networking",
+      "path": "service-networking",
       "title": "Services & Networking",
       "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
     }
