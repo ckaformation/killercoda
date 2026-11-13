@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "path": "cka",
+      "title": "CKA",
+      "description": "Certified Kubernetes Administrator : scénarios de préparation à la certification."
+    },
+    {
+      "path": "ckad",
+      "title": "CKAD",
+      "description": "Certified Kubernetes Application Developer : scénarios de préparation à la certification."
+    }
+  ]
+}
