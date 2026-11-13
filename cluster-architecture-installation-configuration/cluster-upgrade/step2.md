@@ -6,15 +6,15 @@ On suit la procédure officielle : https://kubernetes.io/docs/tasks/administer-c
 
 ## 1. Changer de dépôt de paquets
 
-Le dépôt `pkgs.k8s.io` est organisé **par version mineure** : pour upgrader, il faut d'abord pointer vers le dépôt de la version cible (v1.36).
+Le dépôt `pkgs.k8s.io` est organisé **par version mineure** : pour upgrader, il faut d'abord pointer vers le dépôt de la version cible (v1.37).
 
-`sed -i 's/v1\.35/v1.36/' /etc/apt/sources.list.d/kubernetes.list`{{exec}}
+`sed -i 's/v1\.36/v1.37/' /etc/apt/sources.list.d/kubernetes.list`{{exec}}
 
 `cat /etc/apt/sources.list.d/kubernetes.list`{{exec}}
 
 ## 2. Upgrader le paquet kubeadm
 
-On repère automatiquement le dernier patch disponible dans la ligne v1.36 avec `apt-cache madison`, et on l'installe :
+On repère automatiquement le dernier patch disponible dans la ligne v1.37 avec `apt-cache madison`, et on l'installe :
 
 `apt-mark unhold kubeadm`{{exec}}
 
@@ -48,4 +48,4 @@ Ces pods statiques tournent tous avec le label `tier=control-plane` : une seule 
 
 `kubectl get pods -n kube-system -l tier=control-plane -o custom-columns='NAME:.metadata.name,IMAGE:.spec.containers[0].image'`{{exec}}
 
-`kube-apiserver`, `kube-controller-manager` et `kube-scheduler` doivent afficher un tag d'image en `v1.36.x`. `etcd` a son propre schéma de version (indépendant de Kubernetes) : son numéro de version n'est pas censé changer ici.
+`kube-apiserver`, `kube-controller-manager` et `kube-scheduler` doivent afficher un tag d'image en `v1.37.x`. `etcd` a son propre schéma de version (indépendant de Kubernetes) : son numéro de version n'est pas censé changer ici.

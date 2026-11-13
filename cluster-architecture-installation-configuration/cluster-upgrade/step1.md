@@ -8,7 +8,7 @@ Depuis l'onglet `controlplane` :
 
 `kubectl get nodes -o wide`{{exec}}
 
-Les deux nœuds doivent être `Ready`, en version `v1.35.x`.
+Les deux nœuds doivent être `Ready`, en version `v1.36.x`.
 
 ## 2. Version des outils locaux
 
@@ -26,7 +26,7 @@ Tu devrais voir, entre autres, `etcd`, `kube-apiserver`, `kube-controller-manage
 
 ## Pourquoi upgrader ?
 
-Kubernetes ne supporte la mise à niveau que **d'une version mineure à la suivante** (par exemple 1.35 → 1.36, jamais 1.35 → 1.37 directement). Le principe général :
+Kubernetes ne supporte la mise à niveau que **d'une version mineure à la suivante** (par exemple 1.36 → 1.37, jamais 1.36 → 1.38 directement). Le principe général :
 
 1. Upgrader le control-plane en premier.
 2. Upgrader les workers ensuite, un par un.

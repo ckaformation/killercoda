@@ -1,8 +1,8 @@
 #!/bin/bash
 VERSION=$(kubectl get node controlplane -o jsonpath='{.status.nodeInfo.kubeletVersion}' 2>/dev/null)
 case "$VERSION" in
-  v1.36*) ;;
-  *) echo "kubelet sur controlplane n'est pas encore en v1.36.x (version actuelle: $VERSION)"; exit 1 ;;
+  v1.37*) ;;
+  *) echo "kubelet sur controlplane n'est pas encore en v1.37.x (version actuelle: $VERSION)"; exit 1 ;;
 esac
 
 if ! kubectl wait --for=condition=Ready node/controlplane --timeout=60s >/dev/null 2>&1; then
@@ -16,5 +16,5 @@ if [ "$UNSCHEDULABLE" = "true" ]; then
   exit 1
 fi
 
-echo "controlplane est en v1.36.x, Ready et schedulable."
+echo "controlplane est en v1.37.x, Ready et schedulable."
 exit 0

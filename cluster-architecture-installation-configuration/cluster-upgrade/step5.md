@@ -34,8 +34,8 @@ Le uncordon se fait aussi depuis le control-plane. Rebascule sur l'onglet **`con
 
 `kubectl get nodes -o wide`{{exec}}
 
-Les deux nœuds doivent maintenant afficher la version `v1.36.x` et le statut `Ready`.
+Les deux nœuds doivent maintenant afficher la version `v1.37.x` et le statut `Ready`.
 
 `kubectl get pods -n kube-system -o wide`{{exec}}
 
-Félicitations : ton cluster kubeadm à deux nœuds est passé de v1.35.x à v1.36.x sans interruption de service.
+Félicitations : ton cluster kubeadm à deux nœuds est passé de v1.36.x à v1.37.x sans interruption de service.

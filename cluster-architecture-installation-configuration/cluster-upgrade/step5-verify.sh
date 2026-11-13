@@ -2,8 +2,8 @@
 for NODE in controlplane node01; do
   VERSION=$(kubectl get node "$NODE" -o jsonpath='{.status.nodeInfo.kubeletVersion}' 2>/dev/null)
   case "$VERSION" in
-    v1.36*) ;;
-    *) echo "kubelet sur $NODE n'est pas encore en v1.36.x (version actuelle: $VERSION)"; exit 1 ;;
+    v1.37*) ;;
+    *) echo "kubelet sur $NODE n'est pas encore en v1.37.x (version actuelle: $VERSION)"; exit 1 ;;
   esac
 
   if ! kubectl wait --for=condition=Ready "node/$NODE" --timeout=60s >/dev/null 2>&1; then
@@ -18,5 +18,5 @@ for NODE in controlplane node01; do
   fi
 done
 
-echo "Les deux nœuds sont en v1.36.x, Ready et schedulables : upgrade terminé."
+echo "Les deux nœuds sont en v1.37.x, Ready et schedulables : upgrade terminé."
 exit 0
