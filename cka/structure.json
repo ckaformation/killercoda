@@ -1,12 +1,9 @@
 {
   "items": [
-    { "path": "app-deploy" },
-    { "path": "cluster-architecture-installation-configuration" },
-    { "path": "helm-and-kustomize" },
     {
-      "path": "service-networking",
-      "title": "Services & Networking",
-      "description": "Scénarios sur les éléments qui composent le réseau dans Kubernetes."
+      "path": "../cluster-architecture-installation-configuration",
+      "title": "Cluster architecture, Installation et configuration",
+      "description": "Scénarios sur la mise en place et la configuration d'un cluster Kubernetes."
     }
   ]
 }
