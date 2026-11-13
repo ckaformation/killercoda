@@ -1,4 +1,4 @@
-# Scénario Killercoda — Upgrade d'un cluster kubeadm (v1.35 → v1.36)
+# Scénario Killercoda — Upgrade d'un cluster kubeadm (v1.36 → v1.37)
 
 ## Contenu
 
@@ -6,7 +6,7 @@
 kubeadm-cluster-upgrade/
 ├── index.json
 ├── intro.md
-├── intro-background.sh     # INVISIBLE : monte un cluster v1.35.x complet et fonctionnel
+├── intro-background.sh     # INVISIBLE : monte un cluster v1.36.x complet et fonctionnel
 ├── step1.md / step1-verify.sh   # explorer l'état actuel
 ├── step2.md / step2-verify.sh   # upgrade kubeadm + kubeadm upgrade apply (controlplane)
 ├── step3.md / step3-verify.sh   # drain + kubelet/kubectl + uncordon (controlplane)
@@ -24,15 +24,15 @@ dans le même "course" Killercoda.
 Ce scénario réutilise le même backend (`kubernetes-kubeadm-2nodes`) et une
 bonne partie de la même logique de préparation (reset, réinstallation des
 paquets, `kubeadm init`, Calico, `kubeadm join`), mais **le cluster n'est
-pas détruit** : il est laissé fonctionnel, en v1.35.x, pour que l'exercice
+pas détruit** : il est laissé fonctionnel, en v1.36.x, pour que l'exercice
 de l'élève soit la mise à niveau elle-même — pas la création du cluster.
 
 ## Choix effectués et pourquoi
 
-- **Version de départ : v1.35.x. Version cible : v1.36.x.** Choix
+- **Version de départ : v1.36.x. Version cible : v1.37.x.** Choix
   directement confirmé par la documentation officielle "Upgrading kubeadm
   clusters", consultée en direct au moment de la rédaction : elle décrit
-  explicitement la transition "from version 1.35.x to version 1.36.x"
+  explicitement la transition "from version 1.36.x to version 1.37.x"
   comme la procédure courante.
 
 - **Aucune version de patch n'est codée en dur.** Le script de préparation
@@ -67,7 +67,7 @@ de l'élève soit la mise à niveau elle-même — pas la création du cluster.
 
 ## Sources officielles utilisées
 
-- https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/ (page live, confirmée traiter 1.35→1.36)
+- https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/ (page live, confirmée traiter 1.36→1.37)
 - https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/upgrading-linux-nodes/
 - https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/change-package-repository/
 - https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-version/ (flag `-o short`)
@@ -82,8 +82,8 @@ de l'élève soit la mise à niveau elle-même — pas la création du cluster.
     `Ready`) — le timeout de `wait-for-prep.sh` a été porté à 240s en
     conséquence, à ajuster si besoin ;
   - que `apt-cache madison` renvoie bien des résultats exploitables une
-    fois le dépôt v1.36 activé (dépend de la disponibilité réelle de
-    paquets v1.36.x sur `pkgs.k8s.io` au moment du test) ;
+    fois le dépôt v1.37 activé (dépend de la disponibilité réelle de
+    paquets v1.37.x sur `pkgs.k8s.io` au moment du test) ;
   - le comportement de `kubeadm upgrade apply -y` (flag présumé correct
     d'après plusieurs sources concordantes, mais pas vérifié en conditions
     réelles).

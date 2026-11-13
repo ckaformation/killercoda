@@ -6,7 +6,7 @@
 
 Même principe qu'à l'étape 2, cette fois sur `node01` :
 
-`sed -i 's/v1\.35/v1.36/' /etc/apt/sources.list.d/kubernetes.list`{{exec}}
+`sed -i 's/v1\.36/v1.37/' /etc/apt/sources.list.d/kubernetes.list`{{exec}}
 
 ## 2. Upgrader le paquet kubeadm
 

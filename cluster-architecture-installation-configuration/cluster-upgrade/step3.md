@@ -34,4 +34,4 @@ Avant de mettre à niveau `kubelet`, on marque le nœud non-schedulable et on é
 
 `kubectl get nodes -o wide`{{exec}}
 
-`controlplane` doit maintenant afficher la version `v1.36.x` dans la colonne `VERSION`, et le statut `Ready`.
+`controlplane` doit maintenant afficher la version `v1.37.x` dans la colonne `VERSION`, et le statut `Ready`.

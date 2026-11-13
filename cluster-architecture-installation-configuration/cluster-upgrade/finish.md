@@ -1,6 +1,6 @@
 # Bravo !
 
-Tu viens de mettre à niveau un cluster Kubernetes kubeadm à deux nœuds, de v1.35.x à v1.36.x, sans temps d'arrêt significatif :
+Tu viens de mettre à niveau un cluster Kubernetes kubeadm à deux nœuds, de v1.36.x à v1.37.x, sans temps d'arrêt significatif :
 
 1. Changement du dépôt de paquets vers la nouvelle version mineure.
 2. Upgrade de `kubeadm`, puis `kubeadm upgrade apply` sur le control-plane.

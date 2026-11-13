@@ -1,10 +1,10 @@
 # Mettre à niveau un cluster Kubernetes avec kubeadm
 
-Bienvenue ! Contrairement au scénario "from scratch", ici **Kubernetes est déjà installé et fonctionnel** sur les deux nœuds (`controlplane` + `node01`), en version **v1.35.x**. Ton objectif : le mettre à niveau vers **v1.36.x**, en suivant la procédure officielle : https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
+Bienvenue ! Contrairement au scénario "from scratch", ici **Kubernetes est déjà installé et fonctionnel** sur les deux nœuds (`controlplane` + `node01`), en version **v1.36.x**. Ton objectif : le mettre à niveau vers **v1.37.x**, en suivant la procédure officielle : https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-upgrade/
 
 ## Ce qui est déjà en place
 
-- Un cluster kubeadm à 2 nœuds fonctionnel, en v1.35.x, avec Calico comme add-on réseau.
+- Un cluster kubeadm à 2 nœuds fonctionnel, en v1.36.x, avec Calico comme add-on réseau.
 - `containerd`, `kubeadm`, `kubelet` et `kubectl` installés sur les deux nœuds.
 - `kubectl` configuré sur `controlplane`.
 

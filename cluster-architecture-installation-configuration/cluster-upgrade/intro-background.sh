@@ -1,10 +1,10 @@
 #!/bin/bash
 # ============================================================================
 # Préparation silencieuse : contrairement au scénario "2nodes-cluster-creation"
-# (qui repartait de zéro), ici on construit un cluster kubeadm v1.35.x
+# (qui repartait de zéro), ici on construit un cluster kubeadm v1.36.x
 # COMPLET ET FONCTIONNEL (containerd + kubeadm/kubelet/kubectl + kubeadm init
 # + Calico + kubeadm join), pour que l'élève parte d'un cluster "déjà
-# installé" à mettre à niveau vers v1.36.x — c'est l'objet de ce scénario.
+# installé" à mettre à niveau vers v1.37.x — c'est l'objet de ce scénario.
 #
 # Basé sur les mêmes commandes officielles que le scénario "from scratch" :
 #   https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
@@ -34,7 +34,7 @@ fi
 WAITEOF
 chmod +x /root/wait-for-prep.sh
 
-# --- Installation de kubeadm/kubelet/kubectl v1.35.x, identique sur les 2 nœuds ---
+# --- Installation de kubeadm/kubelet/kubectl v1.36.x, identique sur les 2 nœuds ---
 INSTALL_CMDS='
 kubeadm reset -f
 rm -rf /etc/cni/net.d
@@ -56,8 +56,8 @@ apt-get clean
 apt-get update
 apt-get install -y apt-transport-https ca-certificates curl gpg
 mkdir -p -m 755 /etc/apt/keyrings
-curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.35/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
-echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.35/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.36/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.36/deb/ /" | tee /etc/apt/sources.list.d/kubernetes.list
 apt-get update
 apt-get install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
@@ -72,7 +72,7 @@ PID_NODE01=$!
 wait "$PID_CONTROLPLANE"
 wait "$PID_NODE01"
 
-# --- Initialiser le control-plane, à la version v1.35.x réellement installée ---
+# --- Initialiser le control-plane, à la version v1.36.x réellement installée ---
 K8S_VERSION=$(kubeadm version -o short)
 kubeadm init \
   --pod-network-cidr=192.168.0.0/16 \
@@ -98,7 +98,7 @@ ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o BatchMode=yes node01 "$J
 
 kubectl wait --for=condition=Ready node/node01 --timeout=180s
 
-# --- Fichier témoin : signale que le cluster v1.35.x est prêt ---
+# --- Fichier témoin : signale que le cluster v1.36.x est prêt ---
 touch /tmp/.scenario-prep-done
 
 exit 0
