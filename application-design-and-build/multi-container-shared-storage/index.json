@@ -1,0 +1,33 @@
+{
+  "title": "Multi-container pods et stockage partagé",
+  "description": "Fournis la page web de trois nginx de trois façons : un init container et un sidecar natif qui écrivent dans un volume emptyDir partagé, puis un PVC existant monté dans le container.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Init container et volume emptyDir",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Sidecar natif et volume emptyDir",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Monter un PVC existant",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
