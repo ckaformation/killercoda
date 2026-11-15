@@ -1,0 +1,38 @@
+{
+  "title": "Build et run d'un container",
+  "description": "Construis une image avec podman à partir d'un Dockerfile, exporte-la dans une archive, pousse-la dans une registry locale, puis lance-la dans Kubernetes.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Écrire un Dockerfile, construire et lancer l'image",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Exporter et réimporter l'image",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Pousser l'image dans la registry locale",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      },
+      {
+        "title": "Lancer l'image dans Kubernetes",
+        "text": "step4.md",
+        "verify": "step4-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
