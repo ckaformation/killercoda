@@ -1,0 +1,28 @@
+{
+  "title": "Job et CronJob : exécuter et planifier une tâche",
+  "description": "Crée un Job qui interroge un service et doit se terminer 3 fois, puis planifie la même tâche avec un CronJob (toutes les 15 minutes, durée maximale, historique) et déclenche-le à la main.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Créer un Job qui doit se terminer 3 fois",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Planifier la tâche avec un CronJob",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
