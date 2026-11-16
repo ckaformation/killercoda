@@ -1,0 +1,33 @@
+{
+  "title": "Canary : répartir le trafic en jouant sur les réplicas",
+  "description": "Une application tourne en 4 réplicas derrière un Service NodePort : déploie une version canary à côté, puis fais passer progressivement son trafic de 25 % à 50 % puis 100 % en ajustant le nombre de réplicas.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Déployer la version canary avec 25 % du trafic",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Passer à 50 % du trafic",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Passer à 100 % du trafic",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
