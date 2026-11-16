@@ -1,0 +1,33 @@
+{
+  "title": "Blue/Green : basculer le trafic entre deux versions",
+  "description": "Deux versions d'une même application tournent en parallèle (blue et green) derrière un Service NodePort : bascule le trafic sur green, reviens sur blue, puis crée un Service ClusterIP pour tester green en interne.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Basculer le trafic sur green",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Rollback sur blue",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Tester green en interne avec un Service ClusterIP",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
