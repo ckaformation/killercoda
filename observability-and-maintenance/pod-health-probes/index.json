@@ -1,0 +1,33 @@
+{
+  "title": "Probes : readiness et liveness",
+  "description": "Le Deployment echo-base tourne dans le namespace hoth sans aucun contrôle de santé : ajoute-lui une readinessProbe HTTP et une livenessProbe exec, puis fais échouer la liveness pour observer la réaction du kubelet.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "intro-background.sh"
+    },
+    "steps": [
+      {
+        "title": "Ajouter une readinessProbe HTTP",
+        "text": "step1.md",
+        "verify": "step1-verify.sh"
+      },
+      {
+        "title": "Ajouter une livenessProbe exec",
+        "text": "step2.md",
+        "verify": "step2-verify.sh"
+      },
+      {
+        "title": "Faire échouer la livenessProbe",
+        "text": "step3.md",
+        "verify": "step3-verify.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  }
+}
