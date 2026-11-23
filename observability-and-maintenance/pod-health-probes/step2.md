@@ -38,10 +38,6 @@ Ajoute ce bloc à la fin du fichier, sous la `readinessProbe` (même indentation
           failureThreshold: 1
 ```
 
-Comme à l'étape 1 : `:set paste` puis `Entrée`, `G`, `o`, colle le bloc.
-
-Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
-
 ## 3. Appliquer
 
 `kubectl apply -f /root/echo-base.yaml`{{exec}}

@@ -43,17 +43,6 @@ Ajoute ce bloc à la fin du fichier, sous `ports` (même indentation que `ports:
           periodSeconds: 10
 ```
 
-Dans vi :
-
-1. tape `:set paste` puis `Entrée` (évite que vi décale l'indentation au collage) ;
-2. tape `G` pour aller à la dernière ligne (`- containerPort: 80`) ;
-3. tape `o` pour ouvrir une nouvelle ligne en dessous ;
-4. colle le bloc.
-
-L'indentation compte en YAML : des espaces, jamais de tabulation.
-
-Sauvegarde et quitte : `Échap`, puis `:wq`, puis `Entrée`.
-
 ## 3. Appliquer et observer
 
 `kubectl apply -f /root/echo-base.yaml`{{exec}}
