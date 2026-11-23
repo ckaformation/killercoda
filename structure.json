@@ -44,7 +44,7 @@
     },
     {
       "path": "observability-and-maintenance",
-      "title": "CKA & CKAD - Observabilité et maintenance des applications",
+      "title": "CKAD - Observabilité et maintenance des applications",
       "description": "Scénarios sur la santé des applications (probes), leur observation et leur maintenance."
     }
   ]

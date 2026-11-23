@@ -39,7 +39,7 @@ Nouveau cours : `observability-and-maintenance`, ajouté à la fin de `structure
   - étape 3 : liveness inchangée, `restartCount` ≥ 1 sur le pod en cours (un pod supprimé puis recréé repart à 0, donc refusé), événement contenant « liveness probe » pour ce pod, pod de nouveau prêt, fichier recréé. Si le pod n'est pas encore prêt, le message invite à relancer la vérification.
 - **Pas de `wait-for-prep.sh`** : la préparation (un namespace et un Deployment `nginx:alpine`) devrait rester sous 20 s. Le manifeste est écrit avant l'attente de l'API pour être disponible immédiatement ; la première commande de l'étape 1 invite à attendre que le pod soit `1/1`.
 - **Pas de Service** : non demandé. L'effet de la readiness sur le trafic est seulement expliqué dans le texte.
-- **Titre du cours** : « CKA & CKAD - Observabilité et maintenance des applications ». Le nom du dossier reprend le domaine CKAD *Application Observability and Maintenance* ; le préfixe `CKA & CKAD` suit l'exemple de `app-deploy`.
+- **Titre du cours** : « CKAD - Observabilité et maintenance des applications », d'après le domaine CKAD *Application Observability and Maintenance* repris dans le nom du dossier.
 
 ## Sources officielles utilisées
 
