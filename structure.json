@@ -41,6 +41,11 @@
       "path": "application-design-and-build",
       "title": "CKAD - Design & build d'applications pour Kubernetes. ",
       "description": "Build et modification d'images, choix du bon workload d'application pour Kubernetes."
+    },
+    {
+      "path": "observability-and-maintenance",
+      "title": "CKAD - Observabilité et maintenance des applications",
+      "description": "Scénarios sur la santé des applications (probes), leur observation et leur maintenance."
     }
   ]
 }
